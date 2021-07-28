@@ -1,0 +1,76 @@
+version: "3.9"
+services:
+  mongodb-timeseries:
+    build:
+      context: .
+      dockerfile: Dockerfile.database
+    command: /root/mongo_executables/bin/mongod --dbpath /tmp/mongodbdata/ --bind_ip 0.0.0.0
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+    environment:
+      - MONGODB_TIMESERIES_EXPIRATION_SECONDS
+    expose:
+      - "${MONGODB_DATABASE_EXTERNAL_ACCESS_PORT}"
+    ports:
+      - "${MONGODB_DATABASE_EXTERNAL_ACCESS_PORT}:27017"
+  data-loader:
+    build:
+      context: .
+      dockerfile: Dockerfile.data-loader
+    environment:
+      - CURRENCY_LOADER_TYPE
+      - CURRENCY_LOADER_URI
+      - MONGODB_DATABASE_HOSTNAME
+      - MONGODB_DATABASE_PORT
+    command: /usr/bin/python3 loader.py ${CURRENCY_LOADER_TYPE}
+    depends_on:
+      - mongodb-timeseries
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+  flask-app-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.app-server
+    command: /usr/bin/python3 server.py
+    environment: 
+      - FLASK_APP_SERVER_PORT
+      - FLASK_APP_SERVER_PUBLIC_HOST
+      - MONGODB_DATABASE_HOSTNAME
+      - MONGODB_DATABASE_PORT
+    ports: 
+      - "${FLASK_APP_SERVER_EXTERNAL_ACCESS_PORT}:${FLASK_APP_SERVER_PORT}"
+    expose:
+      - "${FLASK_APP_SERVER_EXTERNAL_ACCESS_PORT}"
+    depends_on:
+      - mongodb-timeseries
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+  react-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    command: npm start 
+    environment:
+      - FLASK_APP_SERVER_EXTERNAL_ACCESS_PORT
+      - FLASK_APP_SERVER_PUBLIC_HOST
+    expose:
+      - "${REACT_SERVER_EXTERNAL_ACCESS_PORT}"
+    ports:
+      - "${REACT_SERVER_EXTERNAL_ACCESS_PORT}:3000"
+    depends_on:
+      - flask-app-server
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G

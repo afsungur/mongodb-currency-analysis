@@ -1,0 +1,15 @@
+FROM ubuntu:18.04
+RUN apt-get update && \
+    apt-get install software-properties-common -y && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y \
+    python3.9 python3-pip python3.9-dev
+
+WORKDIR data-loader/
+COPY ./data-loader/ .
+
+# Flask Backend Server Settings
+RUN pip3 install -U pip setuptools 
+RUN pip3 install -r requirements.txt
+

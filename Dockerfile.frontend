@@ -1,0 +1,17 @@
+FROM ubuntu:18.04
+RUN apt-get update && \
+    apt-get install -y && \
+    apt-get install wget curl xz-utils ca-certificates -y
+
+
+ARG node_version=15.11.0
+
+WORKDIR frontend/
+COPY ./frontend/ .
+
+
+RUN cd /usr/local \
+ && curl -o- https://nodejs.org/dist/v${node_version}/node-v${node_version}-linux-x64.tar.xz \
+  | tar xJf - --strip 1
+
+RUN npm install --force
