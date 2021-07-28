@@ -13,10 +13,13 @@ app = Flask(__name__,
 CORS(app)
 
 
-mongo_uri=f"mongodb://{os.environ['MONGODB_DATABASE_HOSTNAME']}/{os.environ['MONGODB_DATABASE_PORT']}"
+mongo_uri=f"mongodb://{os.environ['MONGODB_DATABASE_HOSTNAME']}:{os.environ['MONGODB_DATABASE_PORT']}"
+print(f"Trying to connect to the database: {mongo_uri}")
 conn = pymongo.MongoClient(mongo_uri, ssl_cert_reqs=ssl.CERT_NONE)
 collection_ticker = conn['trading']['ticker']
 
+print(conn.server_info())
+print("Database connection is successful.")
 # endpoint for retriving all distinct currencies 
 @app.route('/currencies', methods=['GET'])
 def list_currencies():
@@ -66,6 +69,11 @@ def retrieve_currency_data():
             "low": {"$min" : "$price"},
             "open" : {"$first" : "$price"},
             "close" : {"$last" : "$price"}
+        }
+    },
+    {
+        "$sort" : {
+            "_id.time" : 1
         }
     }
     ]
