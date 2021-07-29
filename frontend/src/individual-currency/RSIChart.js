@@ -27,7 +27,8 @@ class RSIChart extends React.Component {
                 },
                 yaxis: {
                   labels: {
-                    minWidth: 1
+                    minWidth: 1,
+                    formatter: (value) => { return value }
                   },
                   forceNiceScale: true,
                   tooltip: {
