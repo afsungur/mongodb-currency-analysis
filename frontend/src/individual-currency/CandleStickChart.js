@@ -10,45 +10,26 @@ class CandleStickChart extends React.Component {
                 colors: ["#f98815", "#158bf9", "#15f9f3", "#ee240e" ],
                 chart: {
                   id: "candle-stick",
-                  type: "line",
+                  height: 600,
+                  type: "candlestick",
                   animations: {
                     enabled: false
                   }
                 },
+                tooltip: {
+                  enabled: true,
+                },
                 xaxis: {
-                  type: 'category',
-                  label: {
-                    datetimeUTC: false
-                  },
-                  crosshairs: {
-                    show: true
-                  },
-                  floating: false,
+                  type: 'category',                 
                   tooltip: {
                     enabled: true
                   }
                 },
                 yaxis: {
-
-                  labels: {
-                    minWidth: 1
-                  },
-                  forceNiceScale: true,
                   tooltip: {
                     enabled: true
                   },
-                  seriesName: "candlestick",
-                  crosshairs: { 
-                    show: true,
-                    position: 'front',
-                    dropShadow :{
-                      enabled: true
-                    }
-                  },
-                  floating: false,
-                  tooltip: {
-                    enabled: true
-                  },
+                  seriesName: "candlestick"
                 },
                 title: {
                   text: 'CandleStick Chart',
@@ -98,7 +79,7 @@ class CandleStickChart extends React.Component {
         return (
             <Chart
             options={this.state.options}
-            type="line"
+            type="candlestick"
             series={this.state.series}
             width="100%"
             height="600"
