@@ -426,7 +426,7 @@ MongoDB 5.0 introduced a new operator, `$rank` which assigns the rank value for 
 
 Every second, the utility which is running in the container `data-loader` retrieves a WebSocket message which includes hundreds of currency message. And this utility converts every currency data to a `dict` object in `python` and batches it and then executes `insert_many` procedure of `pymongo`. Every individual currency data is inserted into `ticker` collection with the `symbol`, `price`, `time` information:
 
-![compass_01](/Users/fuat.sungur/projects/mongodb-timeseries-currency-analysis/pics/compass_01.png)
+![compass_01](pics/compass_01.png)
 
 
 
