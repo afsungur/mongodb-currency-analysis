@@ -29,6 +29,10 @@ class CandleStickChart extends React.Component {
                   tooltip: {
                     enabled: true
                   },
+                  labels: {
+                    minWidth: 1,
+                    formatter: (value) => { return value }
+                  },
                   seriesName: "candlestick"
                 },
                 title: {
