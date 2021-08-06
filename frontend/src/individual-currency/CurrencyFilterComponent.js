@@ -3,7 +3,6 @@ import 'fomantic-ui-css/semantic.css';
 import { Dropdown, Form } from 'semantic-ui-react';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
 
-
 class CurrencyFilter extends React.Component {
     
     constructor(props) {
@@ -26,8 +25,9 @@ class CurrencyFilter extends React.Component {
             .then(response => {
                 return response.json()
             }).then(data => {
-                let jsonobject=JSON.parse(data)
-                currencies = jsonobject.map((currency) => {
+                let jsonobject=data
+                let result=JSON.parse(jsonobject)
+                currencies = result.map((currency) => {
                     return {"text": currency._id, "value" : currency._id}
                 });
                 console.log(`Number of currencies retrieved from database: ${currencies.length}`);

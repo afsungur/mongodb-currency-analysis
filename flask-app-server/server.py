@@ -21,7 +21,7 @@ collection_ticker = conn['trading']['ticker']
 print(conn.server_info())
 print("Database connection is successful.")
 # endpoint for retriving all distinct currencies 
-@app.route('/currencies', methods=['GET'])
+@app.route('/currency', methods=['GET'])
 def list_currencies():
     print("[Request got]: GET - /currencies")
     agg_pipeline =  [
@@ -38,7 +38,7 @@ def list_currencies():
     ]
     
     docs = list(collection_ticker.aggregate(agg_pipeline))
-    json_result = json_util.dumps(docs, json_options=json_util.RELAXED_JSON_OPTIONS)   
+    json_result = json.dumps(docs, indent=4)
     return jsonify(json_result)
 
 
@@ -219,7 +219,7 @@ def retrieve_currency_data():
     print(f"This is the generated query: {agg_pipeline}")
 
     docs = list(collection_ticker.aggregate(agg_pipeline))
-    json_result = json_util.dumps({"query":json.dumps(agg_pipeline,indent=4), "result": docs}, json_options=json_util.RELAXED_JSON_OPTIONS)   
+    json_result = ({"query":json.dumps(agg_pipeline,indent=4), "result": json.dumps(docs, default=str)})   
     return jsonify(json_result)
 
 
@@ -292,7 +292,7 @@ def topWorstPerformer():
     print(agg_pipeline)
     
     docs = list(collection_ticker.aggregate(agg_pipeline))
-    json_result = json_util.dumps({"query":json.dumps(agg_pipeline, indent=4), "result": docs}, json_options=json_util.RELAXED_JSON_OPTIONS)   
+    json_result = ({"query":json.dumps(agg_pipeline,indent=4), "result": json.dumps(docs, default=str)})   
     return jsonify(json_result)
 
 if __name__ == '__main__':

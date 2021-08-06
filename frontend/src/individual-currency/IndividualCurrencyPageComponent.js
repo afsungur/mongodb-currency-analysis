@@ -84,73 +84,78 @@ class IndividualCurrencyPage extends React.Component {
             this.setState({queryIsRunning: false})
             return response.json()
         }).then(data => {
-            var jsonobject=JSON.parse(data)
+            //var jsonobject=JSON.parse(data)
+            console.log("data:" + data)
+            console.log("results str:" + data.result)
+            var result=JSON.parse(data.result)
+            console.log("rsult" + result)
+            var query=data.query
 
             // what should I render? TABLE or CHART
             if (type === "TABLE") {
-                let currencyHistory = jsonobject.result.map((currency) => {
+                let currencyHistory = result.map((currency) => {
                     return currency
                 });
-                this.setState({query: jsonobject.query, currencyHistoryDataForTable: currencyHistory})                
+                this.setState({query: query, currencyHistoryDataForTable: currencyHistory})                
                 this.renderTable()
             }
             else if (type === "CHART") {
                 
                 // candlestick chart update
-                let candleStickData = jsonobject.result.map((currency) => {
-                    return {"x": currency._id.time.$date, "y": [currency.open,currency.high,currency.low,currency.close]}
+                let candleStickData = result.map((currency) => {
+                    return {"x": currency._id.time, "y": [currency.open,currency.high,currency.low,currency.close]}
                 });
 
                 // MA 1 - line chart update
-                let movingAverageData_01 = jsonobject.result.map((currency) => {
-                    return {"x": currency._id.time.$date, "y" : currency.movingAverage01}
+                let movingAverageData_01 = result.map((currency) => {
+                    return {"x": currency._id.time, "y" : currency.movingAverage01}
                 });
                 
                 // MA 2 - line chart update
-                let movingAverageData_02 = jsonobject.result.map((currency) => {
-                    return {"x": currency._id.time.$date, "y" : currency.movingAverage02}
+                let movingAverageData_02 = result.map((currency) => {
+                    return {"x": currency._id.time, "y" : currency.movingAverage02}
                 });
 
                 // EMA 1 - line chart update
-                let expMovingAverageData_01 = jsonobject.result.map((currency) => {
-                    return {"x": currency._id.time.$date, "y" : currency.expMovingAverage01}
+                let expMovingAverageData_01 = result.map((currency) => {
+                    return {"x": currency._id.time, "y" : currency.expMovingAverage01}
                 });
 
                 // EMA 2 - line chart update
-                let expMovingAverageData_02 = jsonobject.result.map((currency) => {
-                    return {"x": currency._id.time.$date, "y" : currency.expMovingAverage02}
+                let expMovingAverageData_02 = result.map((currency) => {
+                    return {"x": currency._id.time, "y" : currency.expMovingAverage02}
                 });
 
                 var macdLineData = null
                 var macdSignalData = null
                 var macdHistogramData = null
                 if (this.state.numOfPrevDataPointsMacdLine1 !== 0) {
-                    console.log(jsonobject.result)
+                    console.log(result)
                     // draw MACD chart
-                    macdLineData = jsonobject.result.map((currency) => {
-                        return {"x": currency._id.time.$date, "y" : currency.macdLine}
+                    macdLineData = result.map((currency) => {
+                        return {"x": currency._id.time, "y" : currency.macdLine}
                     });
 
-                    macdSignalData = jsonobject.result.map((currency) => {
-                        return {"x": currency._id.time.$date, "y" : currency.macdSignal}
+                    macdSignalData = result.map((currency) => {
+                        return {"x": currency._id.time, "y" : currency.macdSignal}
                     });
 
-                    macdHistogramData = jsonobject.result.map((currency) => {
-                        return {"x": currency._id.time.$date, "y" : currency.macdHistogram}
+                    macdHistogramData = result.map((currency) => {
+                        return {"x": currency._id.time, "y" : currency.macdHistogram}
                     });
                 }
 
 
                 var rsiData = null
                 if (this.state.numOfPrevDataPointsRSI !== 0) {
-                    rsiData = jsonobject.result.map((currency) => {
-                        return {"x": currency._id.time.$date, "y" : currency.rsi}
+                    rsiData = result.map((currency) => {
+                        return {"x": currency._id.time, "y" : currency.rsi}
                     });
                 }
 
 
                 this.setState({
-                    query: jsonobject.query, 
+                    query: query, 
                     chartData: {
                         candleStick: candleStickData,
                         movingAverage01: movingAverageData_01,

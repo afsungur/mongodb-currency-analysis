@@ -34,7 +34,7 @@ class RankData extends React.Component {
                     this.props.rankData.map((item, index) => 
                             
                             <Table.Row> 
-                                <Table.Cell><b>{item._id.time.$date}</b></Table.Cell>
+                                <Table.Cell><b>{item._id.time}</b></Table.Cell>
                                 <Table.Cell>{item.first._id.symbol}</Table.Cell>
                                 <Table.Cell><b>{item.first.diffPercentage}</b></Table.Cell>
                                 <Table.Cell>{item.first.open}</Table.Cell>
