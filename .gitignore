@@ -9,6 +9,7 @@
 **/node_modules
 **/.pnp
 **/.pnp.js
+**/build
 
 **/.env.local
 **/.env.development.local
@@ -21,4 +22,5 @@ yarn-error.log*
 
 # macOS ignore
 **/.DS_Store
+
 

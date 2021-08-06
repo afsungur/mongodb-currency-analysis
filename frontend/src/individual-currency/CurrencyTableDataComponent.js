@@ -57,7 +57,7 @@ class IntervalData extends React.Component {
                 {this.context.currencyHistoryDataForTable !== undefined ?
                     this.context.currencyHistoryDataForTable.map((item, index) => 
                             <Table.Row key={index}> 
-                                <Table.Cell>{item._id.time.$date}</Table.Cell>
+                                <Table.Cell>{item._id.time}</Table.Cell>
                                 <Table.Cell>{item._id.symbol}</Table.Cell>
                                 <Table.Cell>{item.close}</Table.Cell>
                                 <Table.Cell>{item.open}</Table.Cell>

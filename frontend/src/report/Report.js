@@ -41,13 +41,18 @@ class Report extends React.Component {
         .then(response => {
             return response.json()
         }).then(data => {
-            var jsonobject=JSON.parse(data)
-                let currencyHistory = jsonobject.result.map((currency) => {
-                    return currency
-                });
-                this.setState({currencyHistory: currencyHistory, query: jsonobject.query, queryIsRunning: false})
-                console.log(jsonobject.query)
-                
+
+            //var jsonobject=JSON.parse(data)
+            console.log("data:" + data)
+            var result=JSON.parse(data.result)
+            console.log("rsult" + result)
+            var query=data.query
+            let currencyHistory = result.map((currency) => {
+                return currency
+            });
+            this.setState({currencyHistory: currencyHistory, query: query, queryIsRunning: false})
+            
+            
          });
     }
 

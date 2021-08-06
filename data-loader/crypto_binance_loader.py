@@ -7,7 +7,7 @@ import os, sys, logging
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 
-mongo_uri=f"mongodb://{os.environ['MONGODB_DATABASE_HOSTNAME']}/{os.environ['MONGODB_DATABASE_PORT']}"
+mongo_uri=f"{os.environ['MONGODB_DATABASE_URI']}"
 connection = pymongo.MongoClient(mongo_uri)
 db = connection["trading"]
 collection = db["ticker"]
