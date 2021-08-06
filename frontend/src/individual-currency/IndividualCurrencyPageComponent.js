@@ -86,6 +86,7 @@ class IndividualCurrencyPage extends React.Component {
         }).then(data => {
             //var jsonobject=JSON.parse(data)
             console.log("data:" + data)
+            console.log("results str:" + data.result)
             var result=JSON.parse(data.result)
             console.log("rsult" + result)
             var query=data.query

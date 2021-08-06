@@ -6,7 +6,7 @@ import os, sys, logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-
+websocket_uri="wss://stream.binance.com:9443/ws/!ticker@arr"
 mongo_uri=f"{os.environ['MONGODB_DATABASE_URI']}"
 connection = pymongo.MongoClient(mongo_uri)
 db = connection["trading"]
