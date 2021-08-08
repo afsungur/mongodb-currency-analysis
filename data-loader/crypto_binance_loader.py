@@ -38,7 +38,7 @@ async def insert_ticks():
     if_clause='((currency["symbol"] in list_of_currencies_to_write) or (re.match(regex, currency["symbol"])))'
 
     # Start websocket to binance 
-    async with websockets.connect(os.environ['CURRENCY_LOADER_URI'], ssl=True, ping_interval=50, ping_timeout=None) as websocket:
+    async with websockets.connect(websocket_uri, ssl=True, ping_interval=50, ping_timeout=None) as websocket:
         logging.info("Successful: Websocket has been establised to BINANCE platform ...")
         while (True):
             # get the all currencies from the websocket

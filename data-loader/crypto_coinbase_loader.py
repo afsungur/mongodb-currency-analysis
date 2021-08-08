@@ -53,7 +53,7 @@ def get_currency(currency_json):
 # retrieves the price data, converts to dict object then insert into mongodb timeseries db
 async def insert_ticks():
     logging.info("Websocket to coinbase is being established ...")
-    async with websockets.connect(os.environ['CURRENCY_LOADER_URI'], ssl=True, ping_interval=50, ping_timeout=None) as websocket:
+    async with websockets.connect(websocket_uri, ssl=True, ping_interval=50, ping_timeout=None) as websocket:
         logging.info("Successful: Websocket has been establised to COINBASE platform ...")
         await websocket.send(json.dumps(get_subscribe_message()))
         socket_message = await websocket.recv()
