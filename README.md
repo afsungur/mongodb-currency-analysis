@@ -77,12 +77,30 @@ Set the environment variables for the session.
 
 ```bash
 └─ $ ▶ echo ${FLASK_APP_SERVER_PORT} ${FLASK_APP_SERVER_PUBLIC_HOST} ${MONGODB_DATABASE_HOSTNAME}
-7000 localhost mongodb
+7000 localhost mongodb-timeseries
 ```
 
 If you've seen the above output, you can proceed the next step.
 
 ### 1.5.3. Setting up the MongoDB database
+
+
+
+#### Remove all mongodb-timeseries images 
+
+If you've already built the docker images but not able to run and want to do everything from scratch, you can remove the already built mongodb timeseries demo toolkit images with the following command:
+```bash
+└─ $ ▶ docker images -a | grep "mongodb-timeseries" | awk '{print $3}' | xargs docker rmi -f
+
+```
+
+#### Making sure environment variables are set
+
+Before running the containers, please make sure that you have successfully set the environment variable. However, you can manually execute the following command just before running the containers:
+
+```bash
+. .env
+```
 
 #### 1.5.3.1 Build the MongoDB 5.0 image
 
@@ -316,7 +334,7 @@ Time to complete: 15 minutes
 
 After you start the containers wait for a while.
 
-Access the following page: `http://localhost:9121/` where React server accepts the requests. (It might take for a while React server to be ready -1-2 minutes).
+Access the following page: `http://localhost:9121/` where React server accepts the requests. (It might take for a while React server to be ready -1-2 minutes). Please find the "`react-frontend_1 Compiled`" message to be sure react development server successfully run. 
 
 Note: If you've already modified the ports, you need to change the host/port info to access home page.
 
