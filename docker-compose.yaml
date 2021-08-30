@@ -22,8 +22,6 @@ services:
       dockerfile: Dockerfile.data-loader
     environment:
       - CURRENCY_LOADER_TYPE
-      - MONGODB_DATABASE_HOSTNAME
-      - MONGODB_DATABASE_PORT
       - MONGODB_DATABASE_URI
     command: /usr/bin/python3 loader.py ${CURRENCY_LOADER_TYPE}
     depends_on:
