@@ -1,4 +1,7 @@
+If you haven't read the blog post regarding currency analysis with MongoDB, please have a look at it first: https://www.mongodb.com/developer/article/time-series-candlestick/
+
 # Currency Analysis with MongoDB Time-Series Collection
+
 In this demo toolkit, you can test how newly introduced time-series collections works in MongoDB 5.0. 
 
 Either you can refer to section [Quick Install](#1-quick-install-with-docker) to build and deploy required docker containers OR you can build / modify / observe the components and deploy manually. 
