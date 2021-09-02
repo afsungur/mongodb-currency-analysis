@@ -309,8 +309,8 @@ class IndividualCurrencyPage extends React.Component {
                                         <MAFilter name="Exponential Moving average 2" number={3}/>
                                         <MACDFilter name="MACD Filter"/>
                                         <RSIFilter name="RSI Filter"/>
-                                        <Button color='green' onClick={() => this.fetchAndRender("CHART")} >Show Charts</Button>
-                                        <Button color='green' onClick={() => this.fetchAndRender("TABLE")} >Show Data</Button>
+                                        <Button icon labelPosition='right' disabled={this.state.currency===""} color='green' onClick={() => this.fetchAndRender("CHART")} ><Icon name='chart line'/>Show Charts</Button>
+                                        <Button icon labelPosition='right' disabled={this.state.currency===""} color='green' onClick={() => this.fetchAndRender("TABLE")} ><Icon name='numbered list'/>Show Data</Button>
                                     </Form>
                                 </Segment>
                                 <Segment>
