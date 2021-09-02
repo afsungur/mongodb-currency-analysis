@@ -1,6 +1,6 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Button, Segment, Form, Container, Dimmer, Loader } from 'semantic-ui-react';
+import { Button, Segment, Form, Container, Dimmer, Loader, Label, Icon } from 'semantic-ui-react';
 import CurrencyFilter from './CurrencyFilterComponent'
 import IntervalFilter from '../common/IntervalFilter'
 import IntervalData from './CurrencyTableDataComponent'
@@ -259,6 +259,13 @@ class IndividualCurrencyPage extends React.Component {
                     <div class="ui padded grid">
                         <div class="one column row">
                             <div class="column">
+                                <Segment>
+                                    <Label>
+                                        <Icon name='clock outline' />
+                                        Latest Record Date-Time:
+                                        <Label.Detail>2021-12-01T01:00:00</Label.Detail>
+                                    </Label>
+                                </Segment>    
                                 <Segment>
                                     <Form>
                                         <CurrencyFilter/>
