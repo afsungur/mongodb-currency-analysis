@@ -28,6 +28,9 @@ class IndividualCurrencyPage extends React.Component {
                 macd: false,
                 rsi: false
             },
+            latestInformation : {
+                latestCurrencyDate : "Still loading ..."
+            },
             movingAverageFilters: [1,1,1,1],
             numOfPrevDataPointsMacdLine1: 12,
             numOfPrevDataPointsMacdLine2: 26,
@@ -50,6 +53,23 @@ class IndividualCurrencyPage extends React.Component {
         }
     }
 
+
+
+    componentWillMount() {
+        let currencies = [];
+        console.log(`API endpoint for retrieving latest information: ${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
+        fetch(`${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
+            .then(response => {
+                return response.json()
+            }).then(data => {
+                let jsonobject=data
+                console.log(`Latest info: ${jsonobject}`);
+                let result=JSON.parse(jsonobject)
+                this.setState({
+                    latestInformation: result,
+            });
+        });
+    }
 
     getBuiltURLforFetch () {
         let url = ""
@@ -263,7 +283,7 @@ class IndividualCurrencyPage extends React.Component {
                                     <Label>
                                         <Icon name='clock outline' />
                                         Latest Record Date-Time:
-                                        <Label.Detail>2021-12-01T01:00:00</Label.Detail>
+                                        <Label.Detail>{this.state.latestInformation.latestCurrencyDate}</Label.Detail>
                                     </Label>
                                 </Segment>    
                                 <Segment>
