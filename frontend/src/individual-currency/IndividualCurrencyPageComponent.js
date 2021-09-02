@@ -29,7 +29,8 @@ class IndividualCurrencyPage extends React.Component {
                 rsi: false
             },
             latestInformation : {
-                latestCurrencyDate : "Still loading ..."
+                latestCurrencyDate : "Still loading ...",
+                firstCurrencyDate: "Still loading ..."
             },
             movingAverageFilters: [1,1,1,1],
             numOfPrevDataPointsMacdLine1: 12,
@@ -284,6 +285,18 @@ class IndividualCurrencyPage extends React.Component {
                                         <Icon name='clock outline' />
                                         Latest Record Date-Time:
                                         <Label.Detail>{this.state.latestInformation.latestCurrencyDate}</Label.Detail>
+                                    </Label>
+                                    <br/>
+                                    <Label>
+                                        <Icon name='clock outline' />
+                                        First Record Date-Time:
+                                        <Label.Detail>{this.state.latestInformation.firstCurrencyDate}</Label.Detail>
+                                    </Label>
+                                    <br/>
+                                    <Label>
+                                        <Icon name='hashtag' />
+                                        Number of Records
+                                        <Label.Detail>{this.state.latestInformation.totalNumberOfRecords}</Label.Detail>
                                     </Label>
                                 </Segment>    
                                 <Segment>
