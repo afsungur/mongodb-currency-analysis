@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Button, Segment, Form, Container, Dimmer, Loader, Label, Icon } from 'semantic-ui-react';
+import { Button, Segment, Form, Container, Dimmer, Loader, Label, Icon, Accordion } from 'semantic-ui-react';
 import CurrencyFilter from './CurrencyFilterComponent'
 import IntervalFilter from '../common/IntervalFilter'
 import IntervalData from './CurrencyTableDataComponent'
@@ -10,7 +10,19 @@ import MAFilter from './MAFilterComponent'
 import MACDFilter  from './MACDFilterComponent';
 import RSIFilter from './RSIFilterComponent';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import ModalExampleSize from './ModalExampleSize'
 
+
+function exampleReducer(state, action) {
+    switch (action.type) {
+      case 'close':
+        return { open: false }
+      case 'open':
+        return { open: true, size: action.size }
+      default:
+        throw new Error('Unsupported action...')
+    }
+  }
 class IndividualCurrencyPage extends React.Component {
     constructor(props) {
         super(props)
@@ -23,6 +35,7 @@ class IndividualCurrencyPage extends React.Component {
             query: this.defaultQuery,
             currency : "",
             interval : 1,
+            isStatisticsAccordionOpen : false,
             enabledFilters : {
                 movingAverage:[false, false, false, false],
                 macd: false,
@@ -55,12 +68,19 @@ class IndividualCurrencyPage extends React.Component {
     }
 
 
-
-    componentWillMount() {
+    fetchLatestInfo() {
         let currencies = [];
         console.log(`API endpoint for retrieving latest information: ${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
+        let loadingLatestInformation = {
+            latestCurrencyDate : "Loading ...",
+            firstCurrencyDate: "Loading ...",
+            totalNumberOfBuckets: "Loading ...",
+            totalNumberOfRecords: "Loading ..."
+        }
+        this.setState({latestInformation: loadingLatestInformation})
         fetch(`${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
             .then(response => {
+
                 return response.json()
             }).then(data => {
                 let jsonobject=data
@@ -70,6 +90,10 @@ class IndividualCurrencyPage extends React.Component {
                     latestInformation: result,
             });
         });
+    }
+
+    componentWillMount() {
+        this.fetchLatestInfo()
     }
 
     getBuiltURLforFetch () {
@@ -210,9 +234,9 @@ class IndividualCurrencyPage extends React.Component {
     handleInterval(value) {
         this.setState({interval: value})
     }
-
-
+  
     render () {
+        
         return (
 
             <IndividiualCurrencyContext.Provider value={{
@@ -280,29 +304,46 @@ class IndividualCurrencyPage extends React.Component {
                     <div class="ui padded grid">
                         <div class="one column row">
                             <div class="column">
+                                
+
                                 <Segment>
-                                    <Label>
-                                        <Icon name='clock outline' />
-                                        Latest Record Date-Time:
-                                        <Label.Detail>{this.state.latestInformation.latestCurrencyDate}</Label.Detail>
-                                    </Label>
-                                    <br/>
-                                    <Label>
-                                        <Icon name='clock outline' />
-                                        First Record Date-Time:
-                                        <Label.Detail>{this.state.latestInformation.firstCurrencyDate}</Label.Detail>
-                                    </Label>
-                                    <br/>
-                                    <Label>
-                                        <Icon name='hashtag' />
-                                        Number of Records:
-                                        <Label.Detail>{this.state.latestInformation.totalNumberOfRecords}</Label.Detail>
-                                    </Label>
-                                    <Label>
-                                        <Icon name='hashtag' />
-                                        Number of Buckets:
-                                        <Label.Detail>{this.state.latestInformation.totalNumberOfBuckets}</Label.Detail>
-                                    </Label>
+                                <Accordion fluid styled>
+                                    <Accordion.Title
+                                        active={this.state.isStatisticsAccordionOpen}
+                                        index={0}
+                                        onClick={() => this.setState({isStatisticsAccordionOpen: !this.state.isStatisticsAccordionOpen})}>
+                                        
+                                        <Icon name='dropdown' />
+                                        Latest Information
+                                    </Accordion.Title>
+                                    <Accordion.Content active={this.state.isStatisticsAccordionOpen}>
+                                        <Button size='mini' icon color='green' onClick={() => this.fetchLatestInfo()} ><Icon name='refresh'/></Button>
+                                        <br/>
+                                        <Label>
+                                            <Icon name='clock outline' />
+                                            Latest Record Date-Time:
+                                            <Label.Detail>{this.state.latestInformation.latestCurrencyDate}</Label.Detail>
+                                        </Label>
+                                        <br/>
+                                        <Label>
+                                            <Icon name='clock outline' />
+                                            First Record Date-Time:
+                                            <Label.Detail>{this.state.latestInformation.firstCurrencyDate}</Label.Detail>
+                                        </Label>
+                                        <br/>
+                                        <Label>
+                                            <Icon name='hashtag' />
+                                            Number of Records:
+                                            <Label.Detail>{this.state.latestInformation.totalNumberOfRecords}</Label.Detail>
+                                        </Label>
+                                        <Label>
+                                            <Icon name='hashtag' />
+                                            Number of Buckets:
+                                            <Label.Detail>{this.state.latestInformation.totalNumberOfBuckets}</Label.Detail>
+                                        </Label>
+                                    </Accordion.Content>
+                                </Accordion>
+                                    
                                 </Segment>    
                                 <Segment>
                                     <Form>
