@@ -10,7 +10,6 @@ import MAFilter from './MAFilterComponent'
 import MACDFilter  from './MACDFilterComponent';
 import RSIFilter from './RSIFilterComponent';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
-import ModalExampleSize from './ModalExampleSize'
 
 
 function exampleReducer(state, action) {
