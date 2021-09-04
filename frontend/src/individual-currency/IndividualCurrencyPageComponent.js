@@ -295,7 +295,7 @@ class IndividualCurrencyPage extends React.Component {
                                     <br/>
                                     <Label>
                                         <Icon name='hashtag' />
-                                        Number of Records
+                                        Number of Records:
                                         <Label.Detail>{this.state.latestInformation.totalNumberOfRecords}</Label.Detail>
                                     </Label>
                                 </Segment>    
