@@ -8,7 +8,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 512M
     environment:
       - MONGODB_TIMESERIES_EXPIRATION_SECONDS
@@ -23,6 +23,7 @@ services:
     environment:
       - CURRENCY_LOADER_TYPE
       - MONGODB_DATABASE_URI
+      - FINNHUB_TOKEN
     command: /usr/bin/python3 loader.py ${CURRENCY_LOADER_TYPE}
     depends_on:
       - mongodb-timeseries
@@ -30,19 +31,19 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 128M
   flask-app-server:
     build:
       context: .
       dockerfile: Dockerfile.app-server
     command: /usr/bin/python3 server.py
-    environment: 
+    environment:
       - FLASK_APP_SERVER_PORT
       - FLASK_APP_SERVER_PUBLIC_HOST
       - MONGODB_DATABASE_HOSTNAME
       - MONGODB_DATABASE_PORT
-    ports: 
+    ports:
       - "${FLASK_APP_SERVER_EXTERNAL_ACCESS_PORT}:${FLASK_APP_SERVER_PORT}"
     expose:
       - "${FLASK_APP_SERVER_EXTERNAL_ACCESS_PORT}"
@@ -51,13 +52,13 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
   react-frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    command: npm start 
+    command: npm start
     environment:
       - FLASK_APP_SERVER_EXTERNAL_ACCESS_PORT
       - FLASK_APP_SERVER_PUBLIC_HOST
@@ -70,5 +71,5 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 1G
