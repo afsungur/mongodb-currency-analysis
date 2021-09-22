@@ -22,4 +22,4 @@ yarn-error.log*
 # macOS ignore
 **/.DS_Store
 
-
+**/.venv
