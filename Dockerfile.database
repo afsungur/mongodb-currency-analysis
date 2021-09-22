@@ -3,8 +3,8 @@ RUN apt-get update && \
     apt-get install wget libcurl4 openssl liblzma5 -y 
 
 # MongoDB Timeseries Database Installation 
-RUN wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-latest.tgz 
-RUN tar -xvf mongodb-linux-x86_64-ubuntu1804-latest.tgz -C /tmp
+RUN wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-5.0.2.tgz 
+RUN tar -xvf mongodb-linux-x86_64-ubuntu1804-5.0.2.tgz -C /tmp
 RUN mv /tmp/mongo*/ /tmp/mongo_executables/
 RUN mv /tmp/mongo_executables/ ~/
 

@@ -1,2 +1,4 @@
 pymongo>=3.6
 websockets==8.1
+finnhub-python==2.4.4
+websocket-client==1.2.1
