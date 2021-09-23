@@ -145,28 +145,31 @@ class IndividualCurrencyPage extends React.Component {
             }
             else if (type === "CHART") {
                 
+                // keep maximum last 100 elements of result array to mitigate chart freezing in the case of huge data
+                let optimizedArray = result.slice(Math.max(result.length-100,0))
+
                 // candlestick chart update
-                let candleStickData = result.map((currency) => {
+                let candleStickData = optimizedArray.map((currency) => {
                     return {"x": currency._id.time, "y": [currency.open,currency.high,currency.low,currency.close]}
                 });
 
                 // MA 1 - line chart update
-                let movingAverageData_01 = result.map((currency) => {
+                let movingAverageData_01 = optimizedArray.map((currency) => {
                     return {"x": currency._id.time, "y" : currency.movingAverage01}
                 });
                 
                 // MA 2 - line chart update
-                let movingAverageData_02 = result.map((currency) => {
+                let movingAverageData_02 = optimizedArray.map((currency) => {
                     return {"x": currency._id.time, "y" : currency.movingAverage02}
                 });
 
                 // EMA 1 - line chart update
-                let expMovingAverageData_01 = result.map((currency) => {
+                let expMovingAverageData_01 = optimizedArray.map((currency) => {
                     return {"x": currency._id.time, "y" : currency.expMovingAverage01}
                 });
 
                 // EMA 2 - line chart update
-                let expMovingAverageData_02 = result.map((currency) => {
+                let expMovingAverageData_02 = optimizedArray.map((currency) => {
                     return {"x": currency._id.time, "y" : currency.expMovingAverage02}
                 });
 
@@ -174,17 +177,17 @@ class IndividualCurrencyPage extends React.Component {
                 var macdSignalData = null
                 var macdHistogramData = null
                 if (this.state.numOfPrevDataPointsMacdLine1 !== 0) {
-                    console.log(result)
+                    //console.log(optimizedArray)
                     // draw MACD chart
-                    macdLineData = result.map((currency) => {
+                    macdLineData = optimizedArray.map((currency) => {
                         return {"x": currency._id.time, "y" : currency.macdLine}
                     });
 
-                    macdSignalData = result.map((currency) => {
+                    macdSignalData = optimizedArray.map((currency) => {
                         return {"x": currency._id.time, "y" : currency.macdSignal}
                     });
 
-                    macdHistogramData = result.map((currency) => {
+                    macdHistogramData = optimizedArray.map((currency) => {
                         return {"x": currency._id.time, "y" : currency.macdHistogram}
                     });
                 }
@@ -192,7 +195,7 @@ class IndividualCurrencyPage extends React.Component {
 
                 var rsiData = null
                 if (this.state.numOfPrevDataPointsRSI !== 0) {
-                    rsiData = result.map((currency) => {
+                    rsiData = optimizedArray.map((currency) => {
                         return {"x": currency._id.time, "y" : currency.rsi}
                     });
                 }
