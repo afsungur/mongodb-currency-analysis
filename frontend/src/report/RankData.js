@@ -1,6 +1,7 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Table } from 'semantic-ui-react';
+import moment from 'moment'
 
 class RankData extends React.Component {
 
@@ -34,7 +35,7 @@ class RankData extends React.Component {
                     this.props.rankData.map((item, index) => 
                             
                             <Table.Row> 
-                                <Table.Cell><b>{item._id.time}</b></Table.Cell>
+                                <Table.Cell><b>{moment(item._id.time).local().format()}</b></Table.Cell>
                                 <Table.Cell>{item.first._id.symbol}</Table.Cell>
                                 <Table.Cell><b>{item.first.diffPercentage}</b></Table.Cell>
                                 <Table.Cell>{item.first.open}</Table.Cell>

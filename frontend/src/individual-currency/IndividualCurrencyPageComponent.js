@@ -10,6 +10,7 @@ import MAFilter from './MAFilterComponent'
 import MACDFilter  from './MACDFilterComponent';
 import RSIFilter from './RSIFilterComponent';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import moment from 'moment'
 
 
 function exampleReducer(state, action) {
@@ -41,8 +42,8 @@ class IndividualCurrencyPage extends React.Component {
                 rsi: false
             },
             latestInformation : {
-                latestCurrencyDate : "Still loading ...",
-                firstCurrencyDate: "Still loading ..."
+                latestCurrencyDateLocalStr : "Loading ...",
+                firstCurrencyDateLocalStr: "Loading ..."
             },
             movingAverageFilters: [1,1,1,1],
             numOfPrevDataPointsMacdLine1: 12,
@@ -71,8 +72,8 @@ class IndividualCurrencyPage extends React.Component {
         let currencies = [];
         console.log(`API endpoint for retrieving latest information: ${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
         let loadingLatestInformation = {
-            latestCurrencyDate : "Loading ...",
-            firstCurrencyDate: "Loading ...",
+            latestCurrencyDateLocalStr : "Loading ...",
+            firstCurrencyDateLocalStr: "Loading ...",
             totalNumberOfBuckets: "Loading ...",
             totalNumberOfRecords: "Loading ..."
         }
@@ -85,10 +86,12 @@ class IndividualCurrencyPage extends React.Component {
                 let jsonobject=data
                 console.log(`Latest info: ${jsonobject}`);
                 let result=JSON.parse(jsonobject)
+                result.latestCurrencyDateLocalStr=moment(result.latestCurrencyDate).local().format();
+                result.firstCurrencyDateLocalStr=moment(result.firstCurrencyDate).local().format();
                 this.setState({
                     latestInformation: result,
+                });
             });
-        });
     }
 
     componentWillMount() {
@@ -147,30 +150,36 @@ class IndividualCurrencyPage extends React.Component {
                 
                 // keep maximum last 100 elements of result array to mitigate chart freezing in the case of huge data
                 let optimizedArray = result.slice(Math.max(result.length-100,0))
+                optimizedArray = optimizedArray.map(x => {
+                    x.localTimeStr = moment.utc(x._id.time).local().format()
+                    return x
+                })
 
+              
+                
                 // candlestick chart update
                 let candleStickData = optimizedArray.map((currency) => {
-                    return {"x": currency._id.time, "y": [currency.open,currency.high,currency.low,currency.close]}
+                    return {"x": currency.localTimeStr, "y": [currency.open,currency.high,currency.low,currency.close]}
                 });
 
                 // MA 1 - line chart update
                 let movingAverageData_01 = optimizedArray.map((currency) => {
-                    return {"x": currency._id.time, "y" : currency.movingAverage01}
+                    return {"x": currency.localTimeStr, "y" : currency.movingAverage01}
                 });
                 
                 // MA 2 - line chart update
                 let movingAverageData_02 = optimizedArray.map((currency) => {
-                    return {"x": currency._id.time, "y" : currency.movingAverage02}
+                    return {"x": currency.localTimeStr, "y" : currency.movingAverage02}
                 });
 
                 // EMA 1 - line chart update
                 let expMovingAverageData_01 = optimizedArray.map((currency) => {
-                    return {"x": currency._id.time, "y" : currency.expMovingAverage01}
+                    return {"x": currency.localTimeStr, "y" : currency.expMovingAverage01}
                 });
 
                 // EMA 2 - line chart update
                 let expMovingAverageData_02 = optimizedArray.map((currency) => {
-                    return {"x": currency._id.time, "y" : currency.expMovingAverage02}
+                    return {"x": currency.localTimeStr, "y" : currency.expMovingAverage02}
                 });
 
                 var macdLineData = null
@@ -180,23 +189,24 @@ class IndividualCurrencyPage extends React.Component {
                     //console.log(optimizedArray)
                     // draw MACD chart
                     macdLineData = optimizedArray.map((currency) => {
-                        return {"x": currency._id.time, "y" : currency.macdLine}
+                        return {"x": currency.localTimeStr, "y" : currency.macdLine}
                     });
 
                     macdSignalData = optimizedArray.map((currency) => {
-                        return {"x": currency._id.time, "y" : currency.macdSignal}
+                        return {"x": currency.localTimeStr, "y" : currency.macdSignal}
                     });
 
                     macdHistogramData = optimizedArray.map((currency) => {
-                        return {"x": currency._id.time, "y" : currency.macdHistogram}
+                        return {"x": currency.localTimeStr, "y" : currency.macdHistogram}
                     });
+
                 }
 
 
                 var rsiData = null
                 if (this.state.numOfPrevDataPointsRSI !== 0) {
                     rsiData = optimizedArray.map((currency) => {
-                        return {"x": currency._id.time, "y" : currency.rsi}
+                        return {"x": currency.localTimeStr, "y" : currency.rsi}
                     });
                 }
 
@@ -324,13 +334,13 @@ class IndividualCurrencyPage extends React.Component {
                                         <Label>
                                             <Icon name='clock outline' />
                                             Latest Record Date-Time:
-                                            <Label.Detail>{this.state.latestInformation.latestCurrencyDate}</Label.Detail>
+                                            <Label.Detail>{this.state.latestInformation.latestCurrencyDateLocalStr}</Label.Detail>
                                         </Label>
                                         <br/>
                                         <Label>
                                             <Icon name='clock outline' />
                                             First Record Date-Time:
-                                            <Label.Detail>{this.state.latestInformation.firstCurrencyDate}</Label.Detail>
+                                            <Label.Detail>{this.state.latestInformation.firstCurrencyDateLocalStr}</Label.Detail>
                                         </Label>
                                         <br/>
                                         <Label>

@@ -2,10 +2,12 @@ import React, {Fragment} from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Table } from 'semantic-ui-react';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import moment from 'moment'
 
 class IntervalData extends React.Component {
 
     render () {
+
         return (
             <Table celled striped>
             <Table.Header>
@@ -57,7 +59,7 @@ class IntervalData extends React.Component {
                 {this.context.currencyHistoryDataForTable !== undefined ?
                     this.context.currencyHistoryDataForTable.map((item, index) => 
                             <Table.Row key={index}> 
-                                <Table.Cell>{item._id.time}</Table.Cell>
+                                <Table.Cell>{moment(item._id.time).local().format()}</Table.Cell>
                                 <Table.Cell>{item._id.symbol}</Table.Cell>
                                 <Table.Cell>{item.close}</Table.Cell>
                                 <Table.Cell>{item.open}</Table.Cell>
