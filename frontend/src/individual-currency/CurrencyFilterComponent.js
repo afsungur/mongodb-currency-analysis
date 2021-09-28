@@ -1,6 +1,6 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Form , Popup, Button, Grid, Icon} from 'semantic-ui-react';
+import { Form, Header, Popup, Button, Grid, Icon} from 'semantic-ui-react';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import ModalExampleDocument from './ModalExampleDocument';
 
@@ -74,28 +74,21 @@ class CurrencyFilter extends React.Component {
                                     onChange={(event,data) => {context.setCurrency(data.value); this.setCurrency(data.value)}}
                                 />                                        
 
-                                <Popup hideOnScroll wide on='click' trigger={<Form.Button icon labelPosition='left' color='green' size="small" label="&nbsp;"><Icon name='search'/>Show Example Data</Form.Button>}>
-                                    <Grid divided columns='equal'>
-                                    <Grid.Column>
-                                        <Popup
-                                        hideOnScroll 
-                                        trigger={<Button fluid icon labelPosition='right' color='green' onClick={() => this.setState({isModalOpen:true, collectionType:"timeseries"})}><Icon name='chart line'/>Time Series Collections</Button>}
-                                        content='Show the data from the collection where the application interacts'
-                                        position='top center'
-                                        size='tiny'
-                                        inverted
-                                        />                                        
-                                        
+                                <Popup hideOnScroll flowing hoverable trigger={<Form.Button fluid icon labelPosition='left' color='green' size="small" label="&nbsp;"><Icon name='search'/>Show Example Data</Form.Button>}>
+                                    <Grid relaxed columns={2} centered divided>
+                                    <Grid.Column textAlign='center' width={6}>
+                                        <Header as='h4'>Time-Series Collection</Header>
+                                        <p>
+                                            From the collection where the application interacts
+                                        </p>
+                                        <Button icon labelPosition='right' color='green' onClick={() => this.setState({isModalOpen:true, collectionType:"timeseries"})}><Icon name='chart line'/>Show Data</Button> 
                                     </Grid.Column>
-                                    <Grid.Column>
-                                        <Popup
-                                        hideOnScroll 
-                                        trigger={<Button fluid icon labelPosition='right' color='green' onClick={() => this.setState({isModalOpen:true, collectionType:"bucketed"})}><Icon name='list'/>System Bucket Collections</Button>}                                        content='Show the data from the collection where the actual data is stored'
-                                        position='top center'
-                                        size='tiny'
-                                        inverted
-                                        />                                        
-                                        
+                                    <Grid.Column textAlign='center' width={6}>
+                                        <Header as='h4'>System Bucketed Collection</Header>
+                                        <p>
+                                            From the collection where the data is actually stored
+                                        </p>
+                                        <Button icon labelPosition='right' color='green' onClick={() => this.setState({isModalOpen:true, collectionType:"bucketed"})}><Icon name='list'/>Show Data</Button>
                                     </Grid.Column>
                                     </Grid>
                                 </Popup>
