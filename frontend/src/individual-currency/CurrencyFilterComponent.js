@@ -29,6 +29,8 @@ class CurrencyFilter extends React.Component {
 
     componentDidMount() {
         let currencies = [];
+
+
         console.log(`API endpoint for retrieving currencies: ${process.env.REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
         fetch(`${process.env.REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
             .then(response => {
@@ -42,6 +44,7 @@ class CurrencyFilter extends React.Component {
                 console.log(`Number of currencies retrieved from database: ${currencies.length}`);
                 this.setState({
                     currencies: currencies,
+                    currency: currencies[0].value
                 });
                 
         });
@@ -67,6 +70,7 @@ class CurrencyFilter extends React.Component {
                                     search
                                     selection 
                                     options={this.state.currencies} 
+                                    value={this.state.currency}
                                     onChange={(event,data) => {context.setCurrency(data.value); this.setCurrency(data.value)}}
                                 />                                        
 
