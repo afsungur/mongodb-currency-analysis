@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Button, Segment, Form, Container, Dimmer, Loader, Label, Icon, Accordion } from 'semantic-ui-react';
+import { Button, Segment, Form, Dimmer, Loader, Label, Icon, Accordion } from 'semantic-ui-react';
 import CurrencyFilter from './CurrencyFilterComponent'
 import IntervalFilter from '../common/IntervalFilter'
 import IntervalData from './CurrencyTableDataComponent'
@@ -13,16 +13,6 @@ import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import moment from 'moment'
 
 
-function exampleReducer(state, action) {
-    switch (action.type) {
-      case 'close':
-        return { open: false }
-      case 'open':
-        return { open: true, size: action.size }
-      default:
-        throw new Error('Unsupported action...')
-    }
-  }
 class IndividualCurrencyPage extends React.Component {
     constructor(props) {
         super(props)
@@ -69,7 +59,6 @@ class IndividualCurrencyPage extends React.Component {
 
 
     fetchLatestInfo() {
-        let currencies = [];
         console.log(`API endpoint for retrieving latest information: ${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
         let loadingLatestInformation = {
             latestCurrencyDateLocalStr : "Loading ...",
@@ -355,7 +344,6 @@ class IndividualCurrencyPage extends React.Component {
                                         </Label>
                                     </Accordion.Content>
                                 </Accordion>
-                                    
                                 </Segment>    
                                 <Segment>
                                     <Form>
@@ -383,7 +371,9 @@ class IndividualCurrencyPage extends React.Component {
                                             <Loader size="big" indeterminate active={this.state.queryIsRunning}>Loading ...</Loader>
                                     </Dimmer>
                                     <Information query={this.state.query}  />
+
                                 </Segment>
+
                             </div>
                         </div>
                     </div>
