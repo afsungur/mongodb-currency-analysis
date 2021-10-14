@@ -18,6 +18,11 @@ class Home extends React.Component {
                 Reports
             </button>
         </Link>
+        <Link to="/rules">
+            <button className="ui button">
+                Rules
+            </button>
+        </Link>
       </div>
     )
   }

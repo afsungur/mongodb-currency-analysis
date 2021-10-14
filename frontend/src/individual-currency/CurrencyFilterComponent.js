@@ -54,6 +54,10 @@ class CurrencyFilter extends React.Component {
         this.setState({currency: value})
     }
 
+    propagateChoiceIfNotInTheContext (value, functionToCall) {
+        functionToCall(value)
+    }
+
     render () {
         
         return (
@@ -64,6 +68,7 @@ class CurrencyFilter extends React.Component {
                     <Form.Field required>
                             <Form.Group>
                                 <Form.Dropdown 
+                                    required
                                     width={8}
                                     label="Currency"
                                     placeholder='Currency' 
@@ -71,7 +76,17 @@ class CurrencyFilter extends React.Component {
                                     selection 
                                     options={this.state.currencies} 
                                     value={this.state.currency}
-                                    onChange={(event,data) => {context.setCurrency(data.value); this.setCurrency(data.value)}}
+                                    onChange={
+                                        (event,data) => {
+                                            this.setCurrency(data.value);
+                                            if (context !== undefined) {
+                                                context.setCurrency(data.value); 
+                                            }
+                                            else { 
+                                                this.propagateChoiceIfNotInTheContext(data.value, this.props.symbolHandler)
+                                            }
+                                                
+                                    }}
                                 />                                        
 
                                 <Popup hideOnScroll flowing hoverable trigger={<Form.Button fluid icon labelPosition='left' color='green' size="small" label="&nbsp;"><Icon name='search'/>Show Example Data</Form.Button>}>

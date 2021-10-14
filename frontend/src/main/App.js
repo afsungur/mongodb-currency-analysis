@@ -23,6 +23,9 @@ class App extends React.Component {
         <a className="item" href="/report">
           Top & Worst Performers
         </a>
+        <a className="item" href="/rules">
+          Rules
+        </a>
         <div className="right menu">
           <a className="item" href="https://cloud.mongodb.com" target="_blank">
             <img src="https://webimages.mongodb.com/_com_assets/cms/MongoDB_Logo_FullColorBlack_RGB-4td3yuxzjs.png?auto=format%2Ccompress" style={styles}/>          
