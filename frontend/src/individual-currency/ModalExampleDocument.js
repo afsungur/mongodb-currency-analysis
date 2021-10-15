@@ -12,8 +12,13 @@ class ModalExampleDocument extends React.Component {
       super(props)
 
         this.state = {
-          exampleData: ""
+          exampleData: "",
+          fileDownloadUrl: "",
+          fileName: ""
         }
+
+        this.downloadData = this.downloadData.bind(this);
+
     }
 
     fetchData() {
@@ -38,6 +43,23 @@ class ModalExampleDocument extends React.Component {
         });
     }
 
+    downloadData() { 
+        var object = {
+          "name" : 1,
+          "surname" : 2
+        }
+        var output = this.state.exampleData
+        const blob = new Blob([output]);
+        const fileDownloadUrl = URL.createObjectURL(blob);
+        const fileName = this.props.currency + "_example.json"
+        this.setState ({fileDownloadUrl: fileDownloadUrl, fileName: fileName}, 
+          () => {
+            this.dofileDownload.click(); 
+            URL.revokeObjectURL(fileDownloadUrl);  // free up storage--no longer needed.
+            this.setState({fileDownloadUrl: ""})
+        })    
+    }
+
 
 
     render() {
@@ -49,7 +71,7 @@ class ModalExampleDocument extends React.Component {
         onClose={this.props.handleClose}
         onMount={() => this.fetchData()}
       >
-        <Modal.Header>Example Document</Modal.Header>
+        <Modal.Header>Example Data</Modal.Header>
         <Modal.Content image scrolling>
   
           <Modal.Description>
@@ -60,6 +82,14 @@ class ModalExampleDocument extends React.Component {
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
+          <Button onClick={() => this.downloadData()} primary>
+            Download Example Set <Icon name='download' />
+          </Button>
+          <a className="hidden"
+             download={this.state.fileName}
+             href={this.state.fileDownloadUrl}
+             ref={e=>this.dofileDownload = e}
+          ></a>
           <Button onClick={() => this.props.handleClose()} primary>
             Close <Icon name='window close' />
           </Button>
