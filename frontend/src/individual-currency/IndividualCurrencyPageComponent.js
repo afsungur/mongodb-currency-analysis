@@ -235,16 +235,20 @@ class IndividualCurrencyPage extends React.Component {
     handleInterval(value) {
         this.setState({interval: value})
     }
+    
+    handleSymbol(value) {
+        this.setState({currency: value})
+        console.log("This value selected:" + value)
+
+    }
+
+
   
     render () {
         
         return (
 
             <IndividiualCurrencyContext.Provider value={{
-                currency: this.state.currency,
-                setCurrency: currency => {
-                    this.setState({currency: currency})
-                },
 
                 movingAverageFilters: this.state.movingAverageFilters,
                 setMovingAverageFilter: (index, value) => {
@@ -347,7 +351,7 @@ class IndividualCurrencyPage extends React.Component {
                                 </Segment>    
                                 <Segment>
                                     <Form>
-                                        <CurrencyFilter/>
+                                        <CurrencyFilter symbolHandler={(x) => this.handleSymbol(x)}/>
                                         <IntervalFilter sendController={(x) => this.handleInterval(x)}/>
                                         <MAFilter name="Moving average 1" number={0}/>
                                         <MAFilter name="Moving average 2" number={1}/>

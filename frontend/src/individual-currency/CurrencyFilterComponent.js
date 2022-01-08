@@ -1,11 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Form, Header, Popup, Button, Grid, Icon} from 'semantic-ui-react';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import ModalExampleDocument from './ModalExampleDocument';
-
-
-
 
 class CurrencyFilter extends React.Component {
     
@@ -30,7 +27,6 @@ class CurrencyFilter extends React.Component {
     componentDidMount() {
         let currencies = [];
 
-
         console.log(`API endpoint for retrieving currencies: ${process.env.REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
         fetch(`${process.env.REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
             .then(response => {
@@ -42,17 +38,20 @@ class CurrencyFilter extends React.Component {
                     return {"text": currency._id, "value" : currency._id}
                 });
                 console.log(`Number of currencies retrieved from database: ${currencies.length}`);
+               
+
                 this.setState({
                     currencies: currencies,
                     currency: currencies[0].value
                 });
+
+                this.propagateChoiceIfNotInTheContext(currencies[0].value, this.props.symbolHandler)
+
                 
         });
     }
 
-    setCurrency (value) {
-        this.setState({currency: value})
-    }
+
 
     propagateChoiceIfNotInTheContext (value, functionToCall) {
         functionToCall(value)
@@ -61,10 +60,8 @@ class CurrencyFilter extends React.Component {
     render () {
         
         return (
-            <IndividiualCurrencyContext.Consumer>
-                {context => (
+
                     <>
-                   
                     <Form.Field required>
                             <Form.Group>
                                 <Form.Dropdown 
@@ -78,13 +75,8 @@ class CurrencyFilter extends React.Component {
                                     value={this.state.currency}
                                     onChange={
                                         (event,data) => {
-                                            this.setCurrency(data.value);
-                                            if (context !== undefined) {
-                                                context.setCurrency(data.value); 
-                                            }
-                                            else { 
-                                                this.propagateChoiceIfNotInTheContext(data.value, this.props.symbolHandler)
-                                            }
+                                            this.setState({currency: data.value})
+                                            this.propagateChoiceIfNotInTheContext(data.value, this.props.symbolHandler)
                                                 
                                     }}
                                 />                                        
@@ -122,8 +114,7 @@ class CurrencyFilter extends React.Component {
                     
                     />
                     </>
-                )}
-            </IndividiualCurrencyContext.Consumer>
+                    
         )
     }
 }
