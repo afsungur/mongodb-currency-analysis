@@ -13,7 +13,7 @@ class Home extends React.Component {
                 Individual Currency Analysis
             </button>
         </Link>
-        <Link to="/topNworstPerformers">
+        <Link to="/report">
             <button className="ui button">
                 Reports
             </button>
