@@ -12,7 +12,6 @@ import RSIFilter from './RSIFilterComponent';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import moment from 'moment'
 
-
 class IndividualCurrencyPage extends React.Component {
     constructor(props) {
         super(props)
@@ -59,7 +58,9 @@ class IndividualCurrencyPage extends React.Component {
 
 
     fetchLatestInfo() {
-        console.log(`API endpoint for retrieving latest information: ${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
+
+        
+        console.log(`xyzAPI endpoint for retrieving latest information: ${window['getConfig'].REACT_APP_ENDPOINT_LATEST_INFO}`)
         let loadingLatestInformation = {
             latestCurrencyDateLocalStr : "Loading ...",
             firstCurrencyDateLocalStr: "Loading ...",
@@ -67,7 +68,7 @@ class IndividualCurrencyPage extends React.Component {
             totalNumberOfRecords: "Loading ..."
         }
         this.setState({latestInformation: loadingLatestInformation})
-        fetch(`${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
+        fetch(`${window['getConfig'].REACT_APP_ENDPOINT_LATEST_INFO}`)
             .then(response => {
 
                 return response.json()
@@ -88,9 +89,9 @@ class IndividualCurrencyPage extends React.Component {
     }
 
     getBuiltURLforFetch () {
-        let url = ""
-        url += `${process.env.REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`
+        let url = `${window['getConfig'].REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`
         url += `?currency=${this.state.currency}&interval=${this.state.interval}`
+
         if (this.state.enabledFilters.movingAverage[0]) {
             url += `&ma_1=${this.state.movingAverageFilters[0]}`
         }
@@ -114,7 +115,7 @@ class IndividualCurrencyPage extends React.Component {
 
     fetchAndRender (type) { 
         this.setState({queryIsRunning: true})
-        console.log(`API endpoint for retrieving currency data: ${process.env.REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`)
+        console.log(`API endpoint for retrieving currency data: ${window['getConfig'].REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`)
         fetch(this.getBuiltURLforFetch())            
         .then(response => {
             this.setState({queryIsRunning: false})

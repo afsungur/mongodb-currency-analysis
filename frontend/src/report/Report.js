@@ -36,8 +36,8 @@ class Report extends React.Component {
     fetchAndRender (type) { 
         this.setState({currencyHistory: [], query: this.defaultQuery, queryIsRunning: true })
         
-        console.log(`API endpoint: ${process.env.REACT_APP_ENDPOINT_TOP_N_WORST_PERFORMERS}`)
-        fetch(`${process.env.REACT_APP_ENDPOINT_TOP_N_WORST_PERFORMERS}?method=${this.state.method}&interval=${this.state.interval}`)
+        console.log(`API endpoint: ${window['getConfig'].REACT_APP_ENDPOINT_TOP_N_WORST_PERFORMERS}`)
+        fetch(`${window['getConfig'].REACT_APP_ENDPOINT_TOP_N_WORST_PERFORMERS}?method=${this.state.method}&interval=${this.state.interval}`)
         .then(response => {
             return response.json()
         }).then(data => {

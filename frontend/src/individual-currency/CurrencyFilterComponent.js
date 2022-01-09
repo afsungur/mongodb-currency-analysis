@@ -27,8 +27,8 @@ class CurrencyFilter extends React.Component {
     componentDidMount() {
         let currencies = [];
 
-        console.log(`API endpoint for retrieving currencies: ${process.env.REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
-        fetch(`${process.env.REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
+        console.log(`API endpoint for retrieving currencies: ${window['getConfig'].REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
+        fetch(`${window['getConfig'].REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
             .then(response => {
                 return response.json()
             }).then(data => {

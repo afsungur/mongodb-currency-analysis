@@ -22,7 +22,7 @@ class ModalExampleDocument extends React.Component {
     }
 
     fetchData() {
-      let url = `${process.env.REACT_APP_ENDPOINT_EXAMPLE_DOCUMENT}`
+      let url = `${window['getConfig'].REACT_APP_ENDPOINT_EXAMPLE_DOCUMENT}`
       url += `?currency=${this.props.currency}&collectionType=${this.props.collectionType}`
       console.log(`API endpoint for retrieving currencies: ${url}`)
       this.setState({

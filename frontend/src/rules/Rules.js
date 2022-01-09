@@ -75,7 +75,7 @@ class Rules extends React.Component {
         } 
         this.setState({queryIsRunning: true })
         
-        console.log(`API endpoint: ${process.env.REACT_APP_ENDPOINT_ADD_RULE}`)
+        console.log(`API endpoint: ${window['getConfig'].REACT_APP_ENDPOINT_ADD_RULE}`)
 
         const requestOptions = {
             method: 'POST',
@@ -96,7 +96,7 @@ class Rules extends React.Component {
         };
 
         fetch(
-            `${process.env.REACT_APP_ENDPOINT_ADD_RULE}`,
+            `${window['getConfig'].REACT_APP_ENDPOINT_ADD_RULE}`,
             requestOptions
             )
         .then(response => {
@@ -127,9 +127,9 @@ class Rules extends React.Component {
 
     fetchRules () {
         this.setState({queryIsRunning: true })
-        console.log(`API endpoint: ${process.env.REACT_APP_ENDPOINT_GET_RULES}`)
+        console.log(`API endpoint: ${window['getConfig'].REACT_APP_ENDPOINT_GET_RULES}`)
 
-        fetch(`${process.env.REACT_APP_ENDPOINT_GET_RULES}`)
+        fetch(`${window['getConfig'].REACT_APP_ENDPOINT_GET_RULES}`)
         .then(response => {
             this.setState({queryIsRunning: false })
             return response.json()
@@ -146,7 +146,7 @@ class Rules extends React.Component {
         this.setState({isStatisticQueryRunning: true, isStatisticsLoaded: false})
         console.log("rule_id" + _id)
 
-        let url = `${process.env.REACT_APP_ENDPOINT_GET_STATS}?ruleId=${_id}`
+        let url = `${window['getConfig'].REACT_APP_ENDPOINT_GET_STATS}?ruleId=${_id}`
         console.log(`API endpoint: ${url}`)
 
         fetch(url)
@@ -168,7 +168,7 @@ class Rules extends React.Component {
 
         console.log("It is going to be removed:" + _id)
 
-        let url = `${process.env.REACT_APP_ENDPOINT_DELETE_RULE}?ruleId=${_id}`
+        let url = `${window['getConfig'].REACT_APP_ENDPOINT_DELETE_RULE}?ruleId=${_id}`
         console.log(`API endpoint: ${url}`)
         
         const requestOptions = {
