@@ -1,5 +1,7 @@
 If you haven't read the blog post regarding currency analysis with MongoDB, please have a look at it first: https://www.mongodb.com/developer/article/time-series-candlestick/
 
+If you want to skip building & deploying this demo toolkit and would like to see a live demo, please check this following MongoDB Realm Application: https://cryptocurrencyanalysis-mqfhc.mongodbstitch.com/ . Given MongoDB Realm Web application has more features that this demo toolkit and source will be published soon, stay tuned. 
+
 # Currency Analysis with MongoDB Time-Series Collection
 
 In this demo toolkit, you can test how newly introduced time-series collections works in MongoDB 5.0. 
