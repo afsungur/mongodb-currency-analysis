@@ -59,13 +59,13 @@ async def insert_ticks():
         socket_message = await websocket.recv()
         logging.debug("First response from coinbase web socket: %s", socket_message)
         currency_list = []
-        
+
         while (True):
             socket_message = await websocket.recv()
             currency_json=ast.literal_eval(socket_message)
             if (currency_json["type"] != "ticker"):
                 continue
-            
+
             currency = get_currency(currency_json)
             currency_list.append(currency)
             logging.info("Data retrieved from COINBASE websocket ...")
