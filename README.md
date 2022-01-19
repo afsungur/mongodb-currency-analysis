@@ -1,12 +1,52 @@
+# Important Note
+
+
 If you haven't read the blog post regarding currency analysis with MongoDB, please have a look at it first: https://www.mongodb.com/developer/article/time-series-candlestick/
 
-If you want to skip building & deploying this demo toolkit and would like to see a live demo, please check this following MongoDB Realm Application: https://cryptocurrencyanalysis-mqfhc.mongodbstitch.com/ . Given MongoDB Realm Web application has more features that this demo toolkit and source will be published soon, stay tuned. 
+If you want to skip building & deploying this demo toolkit and would like to see a live demo, please check this following MongoDB Realm Application: https://cryptocurrencyanalysis-mqfhc.mongodbstitch.com/ . Given MongoDB Realm Web application has more features than this demo toolkit and source code of that MongoDB Realm Web Application will be published soon, stay tuned. 
 
-# Currency Analysis with MongoDB Time-Series Collection
 
-In this demo toolkit, you can test how newly introduced time-series collections works in MongoDB 5.0. 
+# Currency Analysis with MongoDB Time-Series Collection and Windowing Operators
+![candle stick](pics/web_cs_ma_ema.png =300x100)![candle stick](pics/web_rsi.png =300x100)![candle stick](pics/macd.png =300x100) 
+
+
+In this demo toolkit, you can test how newly introduced time-series collections works in MongoDB 5.0.  
 
 Either you can refer to section [Quick Install](#1-quick-install-with-docker) to build and deploy required docker containers OR you can build / modify / observe the components and deploy manually. 
+
+
+- [How it works?](#how-it-works-)
+- [Installation](#installation)
+- [1. Quick Install with Docker](#1-quick-install-with-docker)
+  * [1.1. Pre-Requisites](#11-pre-requisites)
+  * [1.2. Time to Complete](#12-time-to-complete)
+  * [1.3. Clone the repository](#13-clone-the-repository)
+  * [1.4. What will I have after installation](#14-what-will-i-have-after-installation)
+  * [1.5. Running the Commands](#15-running-the-commands)
+    + [1.5.1 Change directory to the cloned/downloaded folder](#151-change-directory-to-the-cloned-downloaded-folder)
+    + [1.5.2 Set the Required Environment Variables](#152-set-the-required-environment-variables)
+    + [1.5.3. Setting up the MongoDB database](#153-setting-up-the-mongodb-database)
+      - [Remove all mongodb-timeseries images](#remove-all-mongodb-timeseries-images)
+      - [Making sure environment variables are set](#making-sure-environment-variables-are-set)
+      - [1.5.3.1 Build the MongoDB 5.0 image](#1531-build-the-mongodb-50-image)
+      - [1.5.3.2 Run the MongoDB 5.0 Container as Single Node](#1532-run-the-mongodb-50-container-as-single-node)
+      - [1.5.3.3 Create a time-series collection](#1533-create-a-time-series-collection)
+  * [1.5.4. Setting up Frontend/Backend/Loader Components](#154-setting-up-frontend-backend-loader-components)
+      - [1.5.4.1 Build frontend/backend/data loader docker images](#1541-build-frontend-backend-data-loader-docker-images)
+      - [1.5.4.2 Run frontend/backend/data loader docker containers](#1542-run-frontend-backend-data-loader-docker-containers)
+- [2. Observations](#2-observations)
+  * [2.1. Web Interface](#21-web-interface)
+  * [2.2. Individual Currency Analysis](#22-individual-currency-analysis)
+    + [Latest Information](#latest-information)
+    + [Filter setting](#filter-setting)
+    + [2.2.1. Example filter setting - 1](#221-example-filter-setting---1)
+    + [2.2.1. Example filter setting - 2](#221-example-filter-setting---2)
+  * [2.3. Top & Worst Performers](#23-top---worst-performers)
+- [3. Under the hood](#3-under-the-hood)
+  * [3.1. How data is inserted](#31-how-data-is-inserted)
+
+
+
 
 # How it works?
 
@@ -353,19 +393,23 @@ There are 2 main pages, **Individual Currency Analysis** and **Top & Worst Perfo
 
 Click Individual Currency Analysis.
 
-On this page, you can analyze the currency data based on given interval while applying some statistical currency analysis methods (Moving Average (MA), Exponential Moving Average (EMA))
+On this page, you can analyze the currency data based on given interval while applying some statistical currency analysis methods (Moving Average (MA), Exponential Moving Average (EMA)) and technical indicators (MACD and RSI).
 
-You'll see the following menu.
+![web_currency_filter_01](pics/web_currency_filter_01.jpg)
 
-![web_currency_filter_01](pics/web_currency_filter_01.png)
+### Latest Information
 
-Set the parameters.
+In this section you can find some high-level statistics about the time-series collections. You can refresh the statistics by hitting refresh button in this section.
+
+
+### Filter setting
+Set the parameters accordingly.
 
 - Choose a currency
   - Currency is listed in the exchange and the value of currency gives the ratio between two units. e.g. the value of the currency `BNBBUSD` provides the ratio between coin/token `BNB` to coin/token `BUSD`.
 - Choose an interval 
   - Based on the chosen interval, an aggregation query to analyze time-series data is generated by using the `$dateTrunc` operator which has been introduced with MongoDB 5.0. It truncates the date value to the closest bucket. e.g. if you choose 5 minutes interval then the values  in the time `22:43:03` and `22:44:15`, will be in the same group (`22:40:00`) however if you have some data in the time `22:48:03` then it will be in the next group (`22:45:00`).
-- Choose one or more statistical analysis methods.
+- Choose one or more statistical analysis methods. (Optional)
   - You can choose multiple methods to analyze the chosen currency to predict possible buy/sell points.
   - Moving average
     -  Requires one parameter that sets the boundary of the moving window 
@@ -384,6 +428,16 @@ Set the parameters.
       - MongoDB has introduced `$setWindowFields` operator that executes some calculations on the moving window and it accepts parameters to set the boundary. e.g. how old data needs to be included in the moving window OR how many previous data points need to be included in the window
   - Exponential Moving Average
     - It's similar to moving average but the weight of the recent values are higher than the much older data. Therefore we can expect that EMA (exponential moving average) reacts to the recent changes faster than MA. For more info check [Investopedia](https://www.investopedia.com/terms/e/ema.asp).
+  - MACD and RSI 
+
+Based on your criteria, you'll see Candle Stick, RSI and MACD charts. In order to  see RSI data properly you need at least the number of data points that you specified in the filter (default: 14).
+
+![candle stick](pics/web_cs_ma_ema.png)
+
+![rsi](pics/web_rsi.png)
+
+![macd](pics/macd.png)
+
 
 ### 2.2.1. Example filter setting - 1
 
