@@ -7,10 +7,7 @@ If you want to skip building & deploying this demo toolkit and would like to see
 
 
 # Currency Analysis with MongoDB Time-Series Collection and Windowing Operators
-![candle stick](pics/web_cs_ma_ema.png =300x100) 
-![candle stick](pics/web_rsi.png =300x100) 
-![candle stick](pics/macd.png =300x100) 
-
+<img src="pics/web_cs_ma_ema.png" width="300" heigh="100">&nbsp;<img src="pics/web_rsi.png" width="300" heigh="100">&nbsp;<img src="pics/macd.png" width="300" heigh="100">
 
 In this demo toolkit, you can test how newly introduced time-series collections works in MongoDB 5.0.  
 
