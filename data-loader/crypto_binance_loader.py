@@ -20,8 +20,6 @@ def get_currency(currency_json):
     currency["time"] = timestamp
     currency["price"] = float(currency_json["c"])
     currency["volume"] = float(currency_json["v"])
-    return currency
-
 
 async def insert_ticks():
     # Write the below currencies into the database
@@ -34,10 +32,10 @@ async def insert_ticks():
     # Write the currencies that matches the below REGEX rule into the database
     regex = '.*BTC.*'
 
-    # dynamically evaluated after the JSON data retrieved that  includes all tickers data 
+    # dynamically evaluated after the JSON data retrieved that  includes all tickers data
     if_clause='((currency["symbol"] in list_of_currencies_to_write) or (re.match(regex, currency["symbol"])))'
 
-    # Start websocket to binance 
+    # Start websocket to binance
     async with websockets.connect(websocket_uri, ssl=True, ping_interval=50, ping_timeout=None) as websocket:
         logging.info("Successful: Websocket has been establised to BINANCE platform ...")
         while (True):
@@ -46,8 +44,8 @@ async def insert_ticks():
 
             # convert it
             currencies=ast.literal_eval(socket_message)
-            
-            # get an example currency 
+
+            # get an example currency
             currency=get_currency(currencies[0])
 
             currency_list = []

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Button, Segment, Form, Container, Dimmer, Loader } from 'semantic-ui-react';
+import { Button, Segment, Form, Container, Dimmer, Loader, Label, Icon, Accordion } from 'semantic-ui-react';
 import CurrencyFilter from './CurrencyFilterComponent'
 import IntervalFilter from '../common/IntervalFilter'
 import IntervalData from './CurrencyTableDataComponent'
@@ -11,6 +11,17 @@ import MACDFilter  from './MACDFilterComponent';
 import RSIFilter from './RSIFilterComponent';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
 
+
+function exampleReducer(state, action) {
+    switch (action.type) {
+      case 'close':
+        return { open: false }
+      case 'open':
+        return { open: true, size: action.size }
+      default:
+        throw new Error('Unsupported action...')
+    }
+  }
 class IndividualCurrencyPage extends React.Component {
     constructor(props) {
         super(props)
@@ -23,10 +34,15 @@ class IndividualCurrencyPage extends React.Component {
             query: this.defaultQuery,
             currency : "",
             interval : 1,
+            isStatisticsAccordionOpen : false,
             enabledFilters : {
                 movingAverage:[false, false, false, false],
                 macd: false,
                 rsi: false
+            },
+            latestInformation : {
+                latestCurrencyDate : "Still loading ...",
+                firstCurrencyDate: "Still loading ..."
             },
             movingAverageFilters: [1,1,1,1],
             numOfPrevDataPointsMacdLine1: 12,
@@ -50,6 +66,34 @@ class IndividualCurrencyPage extends React.Component {
         }
     }
 
+
+    fetchLatestInfo() {
+        let currencies = [];
+        console.log(`API endpoint for retrieving latest information: ${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
+        let loadingLatestInformation = {
+            latestCurrencyDate : "Loading ...",
+            firstCurrencyDate: "Loading ...",
+            totalNumberOfBuckets: "Loading ...",
+            totalNumberOfRecords: "Loading ..."
+        }
+        this.setState({latestInformation: loadingLatestInformation})
+        fetch(`${process.env.REACT_APP_ENDPOINT_LATEST_INFO}`)
+            .then(response => {
+
+                return response.json()
+            }).then(data => {
+                let jsonobject=data
+                console.log(`Latest info: ${jsonobject}`);
+                //let result=JSON.parse(jsonobject)
+                this.setState({
+                    latestInformation: data,
+            });
+        });
+    }
+
+    componentWillMount() {
+        this.fetchLatestInfo()
+    }
 
     getBuiltURLforFetch () {
         let url = ""
@@ -189,9 +233,9 @@ class IndividualCurrencyPage extends React.Component {
     handleInterval(value) {
         this.setState({interval: value})
     }
-
-
+  
     render () {
+        
         return (
 
             <IndividiualCurrencyContext.Provider value={{
@@ -259,6 +303,47 @@ class IndividualCurrencyPage extends React.Component {
                     <div class="ui padded grid">
                         <div class="one column row">
                             <div class="column">
+                                
+
+                                <Segment>
+                                <Accordion fluid styled>
+                                    <Accordion.Title
+                                        active={this.state.isStatisticsAccordionOpen}
+                                        index={0}
+                                        onClick={() => this.setState({isStatisticsAccordionOpen: !this.state.isStatisticsAccordionOpen})}>
+                                        
+                                        <Icon name='dropdown' />
+                                        Latest Information
+                                    </Accordion.Title>
+                                    <Accordion.Content active={this.state.isStatisticsAccordionOpen}>
+                                        <Button size='mini' icon color='green' onClick={() => this.fetchLatestInfo()} ><Icon name='refresh'/></Button>
+                                        <br/>
+                                        <Label>
+                                            <Icon name='clock outline' />
+                                            Latest Record Date-Time:
+                                            <Label.Detail>{this.state.latestInformation.latestCurrencyDate}</Label.Detail>
+                                        </Label>
+                                        <br/>
+                                        <Label>
+                                            <Icon name='clock outline' />
+                                            First Record Date-Time:
+                                            <Label.Detail>{this.state.latestInformation.firstCurrencyDate}</Label.Detail>
+                                        </Label>
+                                        <br/>
+                                        <Label>
+                                            <Icon name='hashtag' />
+                                            Number of Records:
+                                            <Label.Detail>{this.state.latestInformation.totalNumberOfRecords}</Label.Detail>
+                                        </Label>
+                                        <Label>
+                                            <Icon name='hashtag' />
+                                            Number of Buckets:
+                                            <Label.Detail>{this.state.latestInformation.totalNumberOfBuckets}</Label.Detail>
+                                        </Label>
+                                    </Accordion.Content>
+                                </Accordion>
+                                    
+                                </Segment>    
                                 <Segment>
                                     <Form>
                                         <CurrencyFilter/>
@@ -269,8 +354,8 @@ class IndividualCurrencyPage extends React.Component {
                                         <MAFilter name="Exponential Moving average 2" number={3}/>
                                         <MACDFilter name="MACD Filter"/>
                                         <RSIFilter name="RSI Filter"/>
-                                        <Button color='green' onClick={() => this.fetchAndRender("CHART")} >Show Charts</Button>
-                                        <Button color='green' onClick={() => this.fetchAndRender("TABLE")} >Show Data</Button>
+                                        <Button icon labelPosition='right' disabled={this.state.currency===""} color='green' onClick={() => this.fetchAndRender("CHART")} ><Icon name='chart line'/>Show Charts</Button>
+                                        <Button icon labelPosition='right' disabled={this.state.currency===""} color='green' onClick={() => this.fetchAndRender("TABLE")} ><Icon name='numbered list'/>Show Data</Button>
                                     </Form>
                                 </Segment>
                                 <Segment>
