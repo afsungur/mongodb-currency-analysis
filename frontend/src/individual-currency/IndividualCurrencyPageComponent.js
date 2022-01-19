@@ -84,9 +84,9 @@ class IndividualCurrencyPage extends React.Component {
             }).then(data => {
                 let jsonobject=data
                 console.log(`Latest info: ${jsonobject}`);
-                let result=JSON.parse(jsonobject)
+                //let result=JSON.parse(jsonobject)
                 this.setState({
-                    latestInformation: result,
+                    latestInformation: data,
             });
         });
     }

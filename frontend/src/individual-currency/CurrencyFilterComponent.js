@@ -27,9 +27,9 @@ class CurrencyFilter extends React.Component {
             }).then(data => {
                 let jsonobject=data
                 console.log(data)
-                //let result=JSON.parse(jsonobject)
+                let result=JSON.parse(jsonobject)
 
-                currencies = data.map((currency) => {
+                currencies = result.map((currency) => {
                     return {"text": currency._id, "value" : currency._id}
                 });
                 console.log(`Number of currencies retrieved from database: ${currencies.length}`);

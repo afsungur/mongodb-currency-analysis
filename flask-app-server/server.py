@@ -17,6 +17,7 @@ mongo_uri=f"mongodb://{os.environ['MONGODB_DATABASE_HOSTNAME']}:{os.environ['MON
 print(f"Trying to connect to the database: {mongo_uri}")
 conn = pymongo.MongoClient(mongo_uri, ssl_cert_reqs=ssl.CERT_NONE)
 collection_ticker = conn['trading']['ticker']
+system_collection_ticker = conn['trading']['system.buckets.ticker']
 
 print(conn.server_info())
 print("Database connection is successful.")
@@ -41,6 +42,39 @@ def list_currencies():
     json_result = json.dumps(docs, indent=4)
     return jsonify(json_result)
 
+@app.route('/latestInfo', methods=['GET'])
+def latest_info():
+    print("[Request got]: GET - /latestInfo")
+    agg_pipeline =  [
+      {
+          '$group' : {
+            '_id' : None,
+            'maxTime': {'$max': '$time'},
+            'minTime': {'$min': '$time'},
+            'cnt': {'$sum':1}
+          }
+      }
+    ]
+
+    docs = list(collection_ticker.aggregate(agg_pipeline))
+    print(jsonify(docs))
+    result = docs[0]
+    print(jsonify(result))
+    buckets_count = system_collection_ticker.count() 
+    
+    message = {
+        'latestCurrencyDate': result['maxTime'],
+        'firstCurrencyDate': result['minTime'],
+        'totalNumberOfRecords' : result['cnt'],
+        'totalNumberOfBuckets' : buckets_count
+    }
+
+    print(jsonify(message))
+
+    # json_result = json.dumps(docs, indent=4)
+    return jsonify(message)
+
+@app.route('/latestInfo', methods=['GET'])
 
 @app.route('/currencyData', methods=['GET'])
 def retrieve_currency_data():
