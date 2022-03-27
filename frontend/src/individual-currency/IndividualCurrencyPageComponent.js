@@ -3,6 +3,7 @@ import 'fomantic-ui-css/semantic.css';
 import { Button, Segment, Form, Dimmer, Loader, Label, Icon, Accordion } from 'semantic-ui-react';
 import CurrencyFilter from './CurrencyFilterComponent'
 import IntervalFilter from '../common/IntervalFilter'
+import DateFilter from '../common/DateFilter'
 import IntervalData from './CurrencyTableDataComponent'
 import CurrencyChart from './CurrencyChart'
 import Information from '../common/Information'
@@ -24,6 +25,7 @@ class IndividualCurrencyPage extends React.Component {
             query: this.defaultQuery,
             currency : "",
             interval : 1,
+            dateFilter: 3,
             isStatisticsAccordionOpen : false,
             enabledFilters : {
                 movingAverage:[false, false, false, false],
@@ -90,7 +92,7 @@ class IndividualCurrencyPage extends React.Component {
 
     getBuiltURLforFetch () {
         let url = `${window['getConfig'].REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`
-        url += `?currency=${this.state.currency}&interval=${this.state.interval}`
+        url += `?currency=${this.state.currency}&interval=${this.state.interval}&dateFilter=${this.state.dateFilter}`
 
         if (this.state.enabledFilters.movingAverage[0]) {
             url += `&ma_1=${this.state.movingAverageFilters[0]}`
@@ -236,6 +238,10 @@ class IndividualCurrencyPage extends React.Component {
     handleInterval(value) {
         this.setState({interval: value})
     }
+
+    handleDateFilter(value) {
+        this.setState({dateFilter: value})
+    }
     
     handleSymbol(value) {
         this.setState({currency: value})
@@ -353,6 +359,7 @@ class IndividualCurrencyPage extends React.Component {
                                 <Segment>
                                     <Form>
                                         <CurrencyFilter symbolHandler={(x) => this.handleSymbol(x)}/>
+                                        <DateFilter sendController={(x) => this.handleDateFilter(x)}/>
                                         <IntervalFilter sendController={(x) => this.handleInterval(x)}/>
                                         <MAFilter name="Moving average 1" number={0}/>
                                         <MAFilter name="Moving average 2" number={1}/>
