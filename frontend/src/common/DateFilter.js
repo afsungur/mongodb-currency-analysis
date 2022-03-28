@@ -3,10 +3,10 @@ import 'fomantic-ui-css/semantic.css';
 import { Dropdown, Form, Popup, Icon } from 'semantic-ui-react';
 
 const dropDownOptionForDateFilterValues = [
-    { key: 1, text: 'Last 3 Days', value: 3 },
-    { key: 2, text: 'Last 7 Days', value: 7 },
-    { key: 3, text: 'Last 15 Days', value: 15 },
-    { key: 4, text: 'Last 30 Days', value: 30 }    
+    { key: 1, text: 'Last 3 Days', value: 3*24 },
+    { key: 2, text: 'Last 7 Days', value: 7*24 },
+    { key: 3, text: 'Last 15 Days', value: 15*24 },
+    { key: 4, text: 'Last 30 Days', value: 30*24 }    
 ]
 
   class DateFilter extends React.Component {
