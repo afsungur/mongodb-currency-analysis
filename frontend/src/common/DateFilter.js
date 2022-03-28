@@ -13,7 +13,7 @@ const dropDownOptionForDateFilterValues = [
     constructor(props) {
         super(props)
         this.state = {
-            value: 3
+            value: 72
         }
     }
 
