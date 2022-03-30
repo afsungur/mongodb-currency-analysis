@@ -25,7 +25,7 @@ class IndividualCurrencyPage extends React.Component {
             query: this.defaultQuery,
             currency : "",
             interval : 1,
-            dateFilter: 3,
+            hourFilter: 72,
             isStatisticsAccordionOpen : false,
             enabledFilters : {
                 movingAverage:[false, false, false, false],
@@ -92,7 +92,7 @@ class IndividualCurrencyPage extends React.Component {
 
     getBuiltURLforFetch () {
         let url = `${window['getConfig'].REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`
-        url += `?currency=${this.state.currency}&interval=${this.state.interval}&dateFilter=${this.state.dateFilter}`
+        url += `?currency=${this.state.currency}&interval=${this.state.interval}&hourFilter=${this.state.hourFilter}`
 
         if (this.state.enabledFilters.movingAverage[0]) {
             url += `&ma_1=${this.state.movingAverageFilters[0]}`
@@ -239,8 +239,8 @@ class IndividualCurrencyPage extends React.Component {
         this.setState({interval: value})
     }
 
-    handleDateFilter(value) {
-        this.setState({dateFilter: value})
+    handleHourFilter(value) {
+        this.setState({hourFilter: value})
     }
     
     handleSymbol(value) {
@@ -359,7 +359,7 @@ class IndividualCurrencyPage extends React.Component {
                                 <Segment>
                                     <Form>
                                         <CurrencyFilter symbolHandler={(x) => this.handleSymbol(x)}/>
-                                        <DateFilter sendController={(x) => this.handleDateFilter(x)}/>
+                                        <DateFilter sendController={(x) => this.handleHourFilter(x)}/>
                                         <IntervalFilter sendController={(x) => this.handleInterval(x)}/>
                                         <MAFilter name="Moving average 1" number={0}/>
                                         <MAFilter name="Moving average 2" number={1}/>
