@@ -68,7 +68,7 @@ class CurrencyFilter extends React.Component {
                                     required
                                     width={8}
                                     label="Currency"
-                                    placeholder='Currency' 
+                                    placeholder='Loading from Database...' 
                                     search
                                     selection 
                                     options={this.state.currencies} 
