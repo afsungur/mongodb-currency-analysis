@@ -4,6 +4,7 @@ import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import MACDChart from './MACDChart'
 import RSIChart from './RSIChart'
 import CandleStickChart from './CandleStickChart';
+import StochasticOscillatorChart from './StochasticOscillatorChart'
 class CurrencyChart extends React.Component {
     
   constructor(props) {
@@ -40,6 +41,13 @@ class CurrencyChart extends React.Component {
               macdHistogramData={this.context.chartData.macdHistogram}
               />
             :null}
+
+            {this.context.enabledFilters.stochasticOscillator ?
+              <StochasticOscillatorChart
+              stochasticOscillatorDataKValue={this.context.chartData.stocOsscK}
+              stochasticOscillatorDataDValue={this.context.chartData.stocOsscD}
+              />
+            : null}
             </div>
           </div>
         </div>

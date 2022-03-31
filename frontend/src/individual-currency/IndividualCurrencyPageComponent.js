@@ -12,6 +12,7 @@ import MACDFilter  from './MACDFilterComponent';
 import RSIFilter from './RSIFilterComponent';
 import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import moment from 'moment'
+import StochasticOscillatorFilter from './StochasticOscillatorFilterComponent';
 
 class IndividualCurrencyPage extends React.Component {
     constructor(props) {
@@ -30,7 +31,8 @@ class IndividualCurrencyPage extends React.Component {
             enabledFilters : {
                 movingAverage:[false, false, false, false],
                 macd: false,
-                rsi: false
+                rsi: false,
+                stochasticOscillator: false
             },
             latestInformation : {
                 latestCurrencyDateLocalStr : "Loading ...",
@@ -41,6 +43,8 @@ class IndividualCurrencyPage extends React.Component {
             numOfPrevDataPointsMacdLine2: 26,
             numOfPrevDataPointsMacdSignal: 9,
             numOfPrevDataPointsRSI: 14,
+            numOfPrevDataPointsStochasticOscillator: 14,
+
             htmlTableData: {
                 currencyData: undefined
             },
@@ -53,7 +57,9 @@ class IndividualCurrencyPage extends React.Component {
                 macdLine: [],
                 macdSignal: [],
                 macdHistogram: [],
-                rsi: []
+                rsi: [],
+                stocOsscK: [],
+                stocOsscD: []
             }
         }
     }
@@ -111,6 +117,9 @@ class IndividualCurrencyPage extends React.Component {
         }
         if (this.state.enabledFilters.rsi) {
             url += `&rsi=${this.state.numOfPrevDataPointsRSI}`
+        }
+        if (this.state.enabledFilters.stochasticOscillator) {
+            url += `&stoc_ossc=${this.state.numOfPrevDataPointsStochasticOscillator}`
         }
         return url
     }
@@ -202,6 +211,18 @@ class IndividualCurrencyPage extends React.Component {
                     });
                 }
 
+                var stocOsscDataKValue = null
+                var stocOsscDataDValue = null
+                if (this.state.numOfPrevDataPointsStochasticOscillator !== 0) {
+                    stocOsscDataKValue = optimizedArray.map((currency) => {
+                        return {"x": currency.localTimeStr, "y" : currency.stocOsscKValue}
+                    });
+
+                    stocOsscDataDValue = optimizedArray.map((currency) => {
+                        return {"x": currency.localTimeStr, "y" : currency.stocOsscDValue}
+                    });
+                }
+
 
                 this.setState({
                     query: query, 
@@ -214,7 +235,9 @@ class IndividualCurrencyPage extends React.Component {
                         macdLine: macdLineData,
                         macdSignal: macdSignalData,
                         macdHistogram: macdHistogramData,
-                        rsi: rsiData
+                        rsi: rsiData,
+                        stocOsscK: stocOsscDataKValue,
+                        stocOsscD: stocOsscDataDValue
                     }
                 })
                 this.renderChart()
@@ -286,6 +309,11 @@ class IndividualCurrencyPage extends React.Component {
                     this.setState({numOfPrevDataPointsRSI: value})
                 },
 
+                numOfPrevDataPointsStochasticOscillator: this.state.numOfPrevDataPointsStochasticOscillator,
+                setNumOfPrevDataPointsnumOfPrevDataPointsStochasticOscillator: value => {
+                    this.setState({numOfPrevDataPointsStochasticOscillator: value})
+                },
+
                 
 
                 enabledFilters: this.state.enabledFilters,
@@ -306,6 +334,11 @@ class IndividualCurrencyPage extends React.Component {
 
                 toggleRSI: () => {
                     const newState = {...this.state.enabledFilters, rsi: !this.state.enabledFilters.rsi}
+                    this.setState({enabledFilters: newState})
+                },
+
+                toggleStochasticOscillator: () => {
+                    const newState = {...this.state.enabledFilters, stochasticOscillator: !this.state.enabledFilters.stochasticOscillator}
                     this.setState({enabledFilters: newState})
                 },
 
@@ -367,6 +400,7 @@ class IndividualCurrencyPage extends React.Component {
                                         <MAFilter name="Exponential Moving average 2" number={3}/>
                                         <MACDFilter name="MACD Filter"/>
                                         <RSIFilter name="RSI Filter"/>
+                                        <StochasticOscillatorFilter name="Stochastic Oscillator Filter"/>
                                         <Button icon labelPosition='right' disabled={this.state.currency===""} color='green' onClick={() => this.fetchAndRender("CHART")} ><Icon name='chart line'/>Show Charts</Button>
                                         <Button icon labelPosition='right' disabled={this.state.currency===""} color='green' onClick={() => this.fetchAndRender("TABLE")} ><Icon name='numbered list'/>Show Data</Button>
                                     </Form>
