@@ -12,7 +12,7 @@ const dropDownOptionForIntervalValues = [
     { key: 7, text: '1 Hour', value: 60 },
     { key: 8, text: '4 Hour', value: 240 },
     { key: 9, text: '8 Hour', value: 480 },
-    { key: 9, text: '24 Hour', value: 1440 }
+    { key: 10, text: '24 Hour', value: 1440 }
   ]
 
   class IntervalFilter extends React.Component {

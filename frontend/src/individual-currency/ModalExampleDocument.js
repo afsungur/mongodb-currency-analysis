@@ -44,10 +44,6 @@ class ModalExampleDocument extends React.Component {
     }
 
     downloadData() { 
-        var object = {
-          "name" : 1,
-          "surname" : 2
-        }
         var output = this.state.exampleData
         const blob = new Blob([output]);
         const fileDownloadUrl = URL.createObjectURL(blob);
@@ -89,7 +85,7 @@ class ModalExampleDocument extends React.Component {
              download={this.state.fileName}
              href={this.state.fileDownloadUrl}
              ref={e=>this.dofileDownload = e}
-          ></a>
+          >&nbsp</a>
           <Button onClick={() => this.props.handleClose()} primary>
             Close <Icon name='window close' />
           </Button>

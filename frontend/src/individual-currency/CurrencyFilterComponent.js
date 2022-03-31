@@ -1,7 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Form, Header, Popup, Button, Grid, Icon} from 'semantic-ui-react';
-import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import ModalExampleDocument from './ModalExampleDocument';
 
 class CurrencyFilter extends React.Component {

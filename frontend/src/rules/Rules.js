@@ -1,9 +1,8 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Message, Divider, Button, Segment, Form, Container, Tab, Dropdown, Dimmer, Modal, Loader, Input, Icon, Table } from 'semantic-ui-react';
+import { Message, Divider, Button, Segment, Form, Container, Tab, Dropdown, Dimmer, Modal, Loader, Input, Table } from 'semantic-ui-react';
 import CurrencyFilter from '../individual-currency/CurrencyFilterComponent';
 import moment from 'moment'
-import { tsParenthesizedType } from '@babel/types';
 import NumberInput from 'semantic-ui-react-numberinput';
 import RuleStatistics from './RuleStatistics'
 const dropDownOptionForMethods = [
@@ -53,7 +52,7 @@ class Rules extends React.Component {
 
     handleTabChange = (e, { activeIndex }) => {
         this.setState({ activeTab: activeIndex })
-        if (activeIndex == 1) {
+        if (activeIndex === 1) {
             this.fetchRules()
             this.setState({isStatisticsLoaded: false})
         }
@@ -189,7 +188,7 @@ class Rules extends React.Component {
 
             var jsonobject=JSON.parse(data)
             console.log(jsonobject)
-            if (jsonobject.deletedCount == 1) {
+            if (jsonobject.deletedCount === 1) {
                 console.log("Successful delete")
                 
                 let rules = this.state.rules.slice()

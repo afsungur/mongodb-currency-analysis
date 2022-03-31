@@ -92,8 +92,8 @@ class IndividualCurrencyPage extends React.Component {
             });
     }
 
-    componentWillMount() {
-        this.fetchLatestInfo()
+    UNSAFE_componentWillMount() {
+        //this.fetchLatestInfo()
     }
 
     getBuiltURLforFetch () {
@@ -346,9 +346,9 @@ class IndividualCurrencyPage extends React.Component {
                 currencyHistoryDataForTable: this.state.currencyHistoryDataForTable
 
             }}>
-                    <div class="ui padded grid">
-                        <div class="one column row">
-                            <div class="column">
+                    <div className="ui padded grid">
+                        <div className="one column row">
+                            <div className="column">
                                 
 
                                 <Segment>

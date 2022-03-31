@@ -1,6 +1,6 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Dropdown, Form, Popup, Icon } from 'semantic-ui-react';
+import { Form, Popup, Icon } from 'semantic-ui-react';
 
 const dropDownOptionForDateFilterValues = [
     { key: 1, text: 'Last Hour', value: 1 },

@@ -1,10 +1,7 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
-import { Message, Divider, Button, Segment, Form, Container, Tab, Dropdown, Dimmer, Modal, Loader, Input, Icon, Table } from 'semantic-ui-react';
-import CurrencyFilter from '../individual-currency/CurrencyFilterComponent';
+import { Table } from 'semantic-ui-react';
 import moment from 'moment'
-import { tsParenthesizedType } from '@babel/types';
-import NumberInput from 'semantic-ui-react-numberinput';
 
 
 class RuleStatistics extends React.Component {

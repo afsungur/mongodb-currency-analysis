@@ -58,10 +58,7 @@ class MACDChart extends React.Component {
                       enabled: true
                     }
                   },
-                  floating: false,
-                  tooltip: {
-                    enabled: true
-                  }
+                  floating: false
                 },
                 title: {
                   text: 'Macd Histogram',
