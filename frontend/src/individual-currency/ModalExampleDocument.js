@@ -22,25 +22,20 @@ class ModalExampleDocument extends React.Component {
     }
 
     fetchData() {
-      let url = `${window['getConfig'].REACT_APP_ENDPOINT_EXAMPLE_DOCUMENT}`
-      url += `?currency=${this.props.currency}&collectionType=${this.props.collectionType}`
-      console.log(`API endpoint for retrieving currencies: ${url}`)
+
       this.setState({
         exampleData: "Please wait it's being loaded ..."
       });
-      fetch(`${url}`)
-            .then(response => {
-                return response.json()
-            }).then(data => {
 
-                let jsonobject=data
-
-                console.log("Returned data for example data:"+ JSON.stringify(data))
-
-                this.setState({
-                    exampleData: jsonobject
-            });
-        });
+      let symbol = `${this.props.currency}`
+      let collectionType = `${this.props.collectionType}`
+      this.props.user.functions.GetExampleDocument(symbol, collectionType).then(
+        result => {
+          this.setState({
+            exampleData: JSON.stringify(result, null, 4)
+          });
+        }
+      )
     }
 
     downloadData() { 

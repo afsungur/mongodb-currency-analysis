@@ -21,35 +21,22 @@ class CurrencyFilter extends React.Component {
         }
     }
 
-    
 
     componentDidMount() {
         let currencies = [];
-
-        console.log(`API endpoint for retrieving currencies: ${window['getConfig'].REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
-        fetch(`${window['getConfig'].REACT_APP_ENDPOINT_LIST_OF_CURRENCIES}`)
-            .then(response => {
-                return response.json()
-            }).then(data => {
-                console.log(data)
-
-                currencies = data.map((currency) => {
-                    return {"text": currency._id, "value" : currency._id}
-                });
-                console.log(`Number of currencies retrieved from database: ${currencies.length}`);
-               
-
-                this.setState({
-                    currencies: currencies,
-                    currency: currencies[0].value
-                });
-
-                this.propagateChoiceIfNotInTheContext(currencies[0].value, this.props.symbolHandler)
-
-                
-        });
+        console.log("function called for currencies")
+        this.props.user.functions.GetSymbols(null).then(
+            result => {
+                    result.map((currency) => (currencies.push({"text": currency._id, "value" : currency._id})))
+                    console.log(`Number of currencies retrieved from database: ${currencies.length}`);
+                    this.setState({
+                        currencies: currencies,
+                        currency: currencies[0].value
+                    });
+                    this.propagateChoiceIfNotInTheContext(currencies[0].value, this.props.symbolHandler)
+            }
+        );
     }
-
 
 
     propagateChoiceIfNotInTheContext (value, functionToCall) {
@@ -102,6 +89,7 @@ class CurrencyFilter extends React.Component {
                             </Form.Group>
                     </Form.Field>
                     <ModalExampleDocument
+                        user={this.props.user}
                         modalOpen={this.state.isModalOpen}
                         handleClose={
                             () => {

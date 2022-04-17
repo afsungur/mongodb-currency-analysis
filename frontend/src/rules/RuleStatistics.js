@@ -26,8 +26,9 @@ class RuleStatistics extends React.Component {
                 <Table.HeaderCell>Time</Table.HeaderCell>
                 <Table.HeaderCell>Symbol</Table.HeaderCell>
                 <Table.HeaderCell>Last Price</Table.HeaderCell>
-                <Table.HeaderCell>Moving Average</Table.HeaderCell>
-                <Table.HeaderCell>Difference</Table.HeaderCell>
+                <Table.HeaderCell>Method</Table.HeaderCell>
+                <Table.HeaderCell>Value of the Method</Table.HeaderCell>
+                <Table.HeaderCell>Threshold</Table.HeaderCell>
                 <Table.HeaderCell>Conditions MET</Table.HeaderCell>
              </Table.Row>
             </Table.Header>
@@ -39,13 +40,13 @@ class RuleStatistics extends React.Component {
                                 <Table.Cell>{moment(item.time).local().format()}</Table.Cell>
                                 <Table.Cell>{item.symbol}</Table.Cell>
                                 <Table.Cell>{item.lastPrice}</Table.Cell>
+                                <Table.Cell>{item.method}</Table.Cell>
                                 <Table.Cell>{item.methodValue}</Table.Cell>
-                                <Table.Cell>{item.percentageDifferent}</Table.Cell>
+                                <Table.Cell>{item.threshold}</Table.Cell>
                                 <Table.Cell>{item.conditionsMet ? "true" : "false" }</Table.Cell>
                             </Table.Row> 
                     ) 
                 : null
-
                 }
             </Table.Body>
             </Table>

@@ -2,11 +2,18 @@ import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Message, Divider, Button, Segment, Form, Container, Tab, Dropdown, Dimmer, Modal, Loader, Input, Table } from 'semantic-ui-react';
 import CurrencyFilter from '../individual-currency/CurrencyFilterComponent';
+import IntervalFilter from '../common/IntervalFilter';
 import moment from 'moment'
 import NumberInput from 'semantic-ui-react-numberinput';
 import RuleStatistics from './RuleStatistics'
+import * as Realm from "realm-web";
+
+const {BSON: { ObjectId },} = Realm;
+
 const dropDownOptionForMethods = [
-    { key: 1, text: 'Moving Average', value: "Moving Avg" }
+    { key: 1, text: 'Moving Average', value: "MA" },
+    { key: 2, text: 'Exponential Moving Average', value: "EMA" },
+    { key: 3, text: 'Relative Strength Index', value: "RSI" },
   ]
 
 const dropDownOptionComparison = [
@@ -14,21 +21,17 @@ const dropDownOptionComparison = [
 { key: 2, text: 'Lesser Than', value: "$lt" }
 ]
 
-
-
-
 class Rules extends React.Component {
     constructor(props) {
         super(props)
-        this.defaultQuery = "// It will be updated after query is executed \ndb.ticker.aggregate([])"
-
         this.state = {
-            method : "Moving Avg",
+            interval: 1,
+            method : "MA",
             comparison: "$gt",
             activeTab: 0,
             ruleName: "",
-            recentNumberOfMinutesToAnalyze: 5,
-            percentageDifferenceToTrigger: 0.025,
+            recentNumberOfDataPointsToAnalyze: 5,
+            threshold: 10,
             isAddRuleSuccessful: null,
             rules : [],
             isRuleDeleteVerificationOpen : false,
@@ -38,16 +41,6 @@ class Rules extends React.Component {
             statisticsData: [],
             symbol: ""
         }
-
-        this.symbolChangeHandler = this.symbolChangeHandler.bind(this)
-    }
-
-    handleMethod (value) {
-        this.setState({method: value})
-    }
-
-    handleComparison (value) {
-        this.setState({comparison: value})
     }
 
     handleTabChange = (e, { activeIndex }) => {
@@ -58,159 +51,142 @@ class Rules extends React.Component {
         }
     }
 
-    handleRuleNameChange (value) {
-        this.setState({ruleName: value})
-    }
-
- 
-    saveRule () { 
-        if (this.state.ruleName === undefined || this.state.ruleName === "") {
-            this.setState({
-                isAddRuleSuccessful: false,
-                addRuleMessage: "Rule name cannot be empty.",
-                addRuleMessageHeader: "Rule has not been added."
-            })
-            return false;
-        } 
-        this.setState({queryIsRunning: true })
-        
-        console.log(`API endpoint: ${window['getConfig'].REACT_APP_ENDPOINT_ADD_RULE}`)
-
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                ruleName: `${this.state.ruleName}`,
-                executionFrequency: `${this.state.executionFrequency}`,
-                symbol: `${this.state.symbol}`,
-                rule: {
-                    method: `${this.state.method}`,
-                    comparison: `${this.state.comparison}`,
-                    percentageDifferenceToTrigger: `${this.state.percentageDifferenceToTrigger}`,
-                    recentNumberOfMinutesToAnalyze: `${this.state.recentNumberOfMinutesToAnalyze}`
-                }
-            })
-        };
-
-        fetch(
-            `${window['getConfig'].REACT_APP_ENDPOINT_ADD_RULE}`,
-            requestOptions
-            )
-        .then(response => {
-            this.setState({queryIsRunning: false })
-            return response.json()
-        }).then(data => {
-
-            var jsonobject=JSON.parse(data)
-            //console.log("data:" + data)
-
-            if (jsonobject.status === "success") {
-                this.setState({
-                    isAddRuleSuccessful: true,
-                    addRuleMessage: jsonobject.message,
-                    addRuleMessageHeader: "Rule has been added successfully."
-                })
-            } else {
-                this.setState({
-                    isAddRuleSuccessful: false,
-                    addRuleMessage: jsonobject.message,
-                    addRuleMessageHeader: "Rule has not been added."
-                })
-            }
-            
-            
-         });
-    }
-
     fetchRules () {
-        this.setState({queryIsRunning: true })
-        console.log(`API endpoint: ${window['getConfig'].REACT_APP_ENDPOINT_GET_RULES}`)
+        this.setState({queryIsRunning: true})
 
-        fetch(`${window['getConfig'].REACT_APP_ENDPOINT_GET_RULES}`)
-        .then(response => {
-            this.setState({queryIsRunning: false })
-            return response.json()
-        }).then(data => {
-            console.log("rules data:"+data)
-            let jsonObjectArray = JSON.parse(data)
-            console.log("rules data:"+jsonObjectArray)
-            this.setState({rules: jsonObjectArray})
-        });
+        this.props.user.mongoClient('mongodb-atlas').db('exchange').collection('rules').find({}).then(
+            result => {
+                this.setState({rules: result})
+                this.setState({queryIsRunning: false})
+            })
+        
+    }
+
+    handleInterval(value) {
+        this.setState({interval: value})
+    }
+
+    handleHourFilter(value) {
+        this.setState({hourFilter: value})
+    }
+    
+    handleSymbol(value) {
+        this.setState({currency: value})
+        console.log("This value selected:" + value)
+
+    }
+
+    handleMethod (value) {
+        this.setState({method: value})
+    }
+
+    handleComparison (value) {
+        this.setState({comparison: value})
+    }
+
+
+    saveRule () { 
+        let rule = {
+            ruleName: this.state.ruleName,
+            interval: this.state.interval,
+            symbol: this.state.currency,
+            method: this.state.method,
+            numOfDataPointsToAnalyze: parseInt(this.state.recentNumberOfDataPointsToAnalyze),
+            threshold: parseInt(this.state.threshold),
+            comparison: this.state.comparison,
+            createdAt: new Date()
+        }
+
+        this.setState({queryIsRunning: true})
+        this.props.user.mongoClient('mongodb-atlas').db('exchange').collection('rules').insertOne(rule).then(
+            result => {
+                this.setState({queryIsRunning: false})
+                if (result.insertedId !== "" ) {
+                    this.setState({
+                        isAddRuleSuccessful: true,
+                        addRuleMessage: result.insertedId,
+                        addRuleMessageHeader: "Rule has been added successfully."
+                    })
+                } else {
+                    this.setState({
+                        isAddRuleSuccessful: false,
+                        addRuleMessage: "ERROR",
+                        addRuleMessageHeader: "Rule has not been added."
+                    })
+                }
+        }
+        )
+
+    }
+
+
+    removeRuleStatistics(_id) {
+        this.setState({queryIsRunning: true })
+
+        this.props.user.mongoClient('mongodb-atlas').db('exchange').collection('ruleStatistics').deleteOne({"_id": ObjectId(_id)}).then(
+            result => {
+                this.setState({queryIsRunning: false })
+            }
+        )
+    }
+
+    removeRule (_id) {
+        this.props.user.mongoClient('mongodb-atlas').db('exchange').collection('rules').deleteOne({"_id": ObjectId(_id)}).then(
+            result => {
+                if (result.deletedCount === 1) {
+                    let rules = this.state.rules.slice()
+                    rules = rules.filter( x =>  x._id !== _id)
+                    
+                    this.setState({rules: rules})
+                    this.removeRuleStatistics(_id) // no need to track
+                }
+            }
+        )
 
     }
 
     fetchStatisticsForARule(_id) {
         this.setState({isStatisticQueryRunning: true, isStatisticsLoaded: false})
-        console.log("rule_id" + _id)
 
-        let url = `${window['getConfig'].REACT_APP_ENDPOINT_GET_STATS}?ruleId=${_id}`
-        console.log(`API endpoint: ${url}`)
 
-        fetch(url)
-        .then(response => {
-            return response.json()
-        }).then(data => {
-            console.log("stats data:"+data)
-            let jsonObjectArray = JSON.parse(data)
-            console.log("stats data after parse:"+jsonObjectArray)
-            console.log("stats data type:" + typeof(jsonObjectArray))
-            console.log("first element:" + JSON.stringify(jsonObjectArray[0]))
-
-            this.setState({statisticsData: jsonObjectArray, isStatisticsLoaded: true, isStatisticQueryRunning: false})
-        });
-    }
-
-    removeRule (_id) {
-        this.setState({queryIsRunning: true })
-
-        console.log("It is going to be removed:" + _id)
-
-        let url = `${window['getConfig'].REACT_APP_ENDPOINT_DELETE_RULE}?ruleId=${_id}`
-        console.log(`API endpoint: ${url}`)
+        this.props.user.mongoClient('mongodb-atlas').db('exchange').collection('ruleStatistics').find({"ruleId": ObjectId(_id)}).then(
+            result => {
+                this.setState({statisticsData: result, isStatisticsLoaded: true, isStatisticQueryRunning: false})
+            })
         
+        /*
+        let endpoint = ruleEndpoint
+        var data = JSON.stringify({
+            "collection": "ruleStatistics",
+            "database": "exchange",
+            "dataSource": "ExchangeData",
+            "sort": {"createdAt" : -1 },
+            "filter" : {"ruleId" :{'$oid' : _id}}
+        });
+
         const requestOptions = {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            method: 'POST',
+            headers: dataApiHeaders,
+            body: data
         };
 
-        fetch(
-            url,
-            requestOptions
-            )
+        this.setState({isStatisticQueryRunning: true, isStatisticsLoaded: false})
+
+        fetch(endpoint, requestOptions)
         .then(response => {
-            this.setState({queryIsRunning: false })
             return response.json()
         }).then(data => {
-
-            var jsonobject=JSON.parse(data)
-            console.log(jsonobject)
-            if (jsonobject.deletedCount === 1) {
-                console.log("Successful delete")
-                
-                let rules = this.state.rules.slice()
-                rules = rules.filter( x =>  x._id !== _id)
-                
-                this.setState({rules: rules})
-
-            }
-
-        })
+            let jsonObject = data
+            let jsonObjectArray = jsonObject.documents
+            
+            this.setState({statisticsData: jsonObjectArray, isStatisticsLoaded: true, isStatisticQueryRunning: false})
+        });*/
     }
 
-    symbolChangeHandler(value) {
-        console.log("This value selected:" + value)
-        this.setState({symbol: value})
+    handleRuleNameChange (value) {
+        this.setState({ruleName: value})
     }
 
-
-    renderModalForRemove() {
-
-    }
-    
     render () {
         return (
             <Container fluid>
@@ -228,7 +204,9 @@ class Rules extends React.Component {
                                                         <label>Rule Name</label>
                                                         <Input placeholder="Give a name to rule to identify rule later" value={this.state.ruleName} onChange={(event,data) => this.handleRuleNameChange(data.value)}/>
                                                 </Form.Field>
-                                                <CurrencyFilter symbolHandler={this.symbolChangeHandler}/>
+                                                <CurrencyFilter user={this.props.user} symbolHandler={(x) => this.handleSymbol(x)}/>
+                                                <IntervalFilter sendController={(x) => this.handleInterval(x)}/>
+
                                                 <Form.Group widths={12}>
                                                     <Form.Field required width={3}>
                                                             <label>Analyze the recent</label>
@@ -236,13 +214,13 @@ class Rules extends React.Component {
                                                                     stepAmount={1} 
                                                                     minValue={1} 
                                                                     maxValue={120} 
-                                                                    value={this.state.recentNumberOfMinutesToAnalyze} 
-                                                                    onChange={(data) => this.setState({recentNumberOfMinutesToAnalyze:data})} />
+                                                                    value={this.state.recentNumberOfDataPointsToAnalyze} 
+                                                                    onChange={(data) => this.setState({recentNumberOfDataPointsToAnalyze:data})} />
                                                             
                                                     </Form.Field>                  
                                                     <Form.Field width={2}>
                                                             <label>&nbsp;</label>
-                                                            <p> <br/>minutes of data </p>
+                                                            <p> <br/> # of data points </p>
                                                     </Form.Field>  
                                                     <Form.Field required width={6}>
                                                             <label>Apply the Method</label>              
@@ -258,56 +236,32 @@ class Rules extends React.Component {
                                                 </Form.Group>
                                                 <Divider/>
                                                 <Form.Group widths={12}>
-                                                    <Form.Field required width={3}>
-                                                            <label>If the last price is at least</label>
-                                                            <NumberInput 
-                                                                    valueType="decimal"
-                                                                    stepAmount={0.025} 
-                                                                    minValue={0} 
-                                                                    maxValue={100} 
-                                                                    precision={4}
-                                                                    value={this.state.percentageDifferenceToTrigger} 
-                                                                    onChange={(data) => this.setState({percentageDifferenceToTrigger:data})} />
-                                                            
-                                                            
-                                                    </Form.Field>        
-                                                    <Form.Field width={1}>
-                                                            <label>&nbsp;</label>
-                                                            <p> <br/>percent </p>
-                                                    </Form.Field>           
+   
                                                     <Form.Field width={3}>
-                                                            <label>&nbsp;</label>
+                                                            <label>If {this.state.method} is</label>
                                                             <Dropdown
-                                                                placeholder='Compact'
                                                                 compact
                                                                 selection
                                                                 value={this.state.comparison}
                                                                 onChange={(event,data) => this.handleComparison(data.value)}
                                                                 options={dropDownOptionComparison}
                                                             />
-                                                    </Form.Field>
-                                                    <Form.Field width={4}>
+                                                    </Form.Field>    
+                                                    <Form.Field width={3}>
                                                             <label>&nbsp;</label>
-                                                            <p> <br/>{this.state.method}</p>
-                                                    </Form.Field>          
-                                                </Form.Group>            
-                                                <Divider/>
-                                                <Form.Group widths={12}>
-                                                    <Form.Field required width={3}>
-                                                            <label>Execute the rule for every</label>
                                                             <NumberInput 
+                                                                    valueType="decimal"
                                                                     stepAmount={1} 
-                                                                    minValue={1} 
-                                                                    maxValue={120} 
-                                                                    value={this.state.executionFrequency} 
-                                                                    onChange={(data) => this.setState({executionFrequency:data})} />
+                                                                    minValue={0} 
+                                                                    maxValue={100000} 
+                                                                    precision={4}
+                                                                    value={this.state.threshold} 
+                                                                    onChange={(data) => this.setState({threshold:data})} />
                                                             
-                                                    </Form.Field>
-                                                    <Form.Field width={4}>
-                                                            <label>&nbsp;</label>
-                                                            <p> <br/>minutes </p>
-                                                    </Form.Field>          
-                                                </Form.Group>
+                                                            
+                                                    </Form.Field>        
+                                                </Form.Group>            
+                                                
                                                 <Button disabled={this.state.queryIsRunning} color='green' onClick={() => this.saveRule()} >Add Rule</Button>
                                             </Form>
                                         </Segment>
@@ -341,10 +295,13 @@ class Rules extends React.Component {
                                                     <Table.HeaderCell>Rule Name</Table.HeaderCell>
                                                     <Table.HeaderCell>Symbol</Table.HeaderCell>
                                                     <Table.HeaderCell>Added Time</Table.HeaderCell>
-                                                    <Table.HeaderCell>Metadata</Table.HeaderCell>
-                                                    <Table.HeaderCell>Exec Frequency</Table.HeaderCell>
-                                                    <Table.HeaderCell>Exec Statistics</Table.HeaderCell>
-                                                    <Table.HeaderCell>Remove</Table.HeaderCell>
+                                                    <Table.HeaderCell>Interval</Table.HeaderCell>
+                                                    <Table.HeaderCell>Method</Table.HeaderCell>
+                                                    <Table.HeaderCell>Comparison</Table.HeaderCell>
+                                                    <Table.HeaderCell>Threshold</Table.HeaderCell>
+                                                    <Table.HeaderCell># of Data Points</Table.HeaderCell>
+                                                    <Table.HeaderCell>Statistics</Table.HeaderCell>
+                                                    <Table.HeaderCell>Remove Rule</Table.HeaderCell>
                                                 </Table.Row>
                                             </Table.Header>
                                             <Table.Body>
@@ -353,9 +310,12 @@ class Rules extends React.Component {
                                                 <Table.Row key={index}> 
                                                     <Table.Cell>{item.ruleName}</Table.Cell>
                                                     <Table.Cell>{item.symbol}</Table.Cell>
-                                                    <Table.Cell>{moment(item.time).local().format()}</Table.Cell>
-                                                    <Table.Cell>{JSON.stringify(item.rule,null,4)}</Table.Cell>
-                                                    <Table.Cell>{item.executionFrequency} min</Table.Cell>
+                                                    <Table.Cell>{moment(item.createdAt).local().format()}</Table.Cell>
+                                                    <Table.Cell>{item.interval}</Table.Cell>
+                                                    <Table.Cell>{item.method}</Table.Cell>
+                                                    <Table.Cell>{item.comparison}</Table.Cell>
+                                                    <Table.Cell>{item.threshold}</Table.Cell>
+                                                    <Table.Cell>{item.numOfDataPointsToAnalyze}</Table.Cell>
                                                     <Table.Cell><Button onClick={() => this.fetchStatisticsForARule(item._id)} circular icon='list'/></Table.Cell>
                                                     <Table.Cell><Button onClick={() => this.setState({isRuleDeleteVerificationOpen: true, chosenRuleId: item._id, chosenRuleName: item.ruleName})} circular icon='remove circle'/></Table.Cell>
                                                     
@@ -402,5 +362,6 @@ class Rules extends React.Component {
         )
     }
 }
+
 
 export default Rules

@@ -14,6 +14,8 @@ import IndividiualCurrencyContext from './IndividualCurrencyContext';
 import moment from 'moment'
 import StochasticOscillatorFilter from './StochasticOscillatorFilterComponent';
 
+
+
 class IndividualCurrencyPage extends React.Component {
     constructor(props) {
         super(props)
@@ -35,6 +37,7 @@ class IndividualCurrencyPage extends React.Component {
                 stochasticOscillator: false
             },
             latestInformation : {
+                isQueryRunning: true,
                 latestCurrencyDateLocalStr : "Loading ...",
                 firstCurrencyDateLocalStr: "Loading ..."
             },
@@ -67,183 +70,165 @@ class IndividualCurrencyPage extends React.Component {
 
     fetchLatestInfo() {
 
-        
-        console.log(`xyzAPI endpoint for retrieving latest information: ${window['getConfig'].REACT_APP_ENDPOINT_LATEST_INFO}`)
-        let loadingLatestInformation = {
-            latestCurrencyDateLocalStr : "Loading ...",
-            firstCurrencyDateLocalStr: "Loading ...",
-            totalNumberOfBuckets: "Loading ...",
-            totalNumberOfRecords: "Loading ..."
-        }
-        this.setState({latestInformation: loadingLatestInformation})
-        fetch(`${window['getConfig'].REACT_APP_ENDPOINT_LATEST_INFO}`)
-            .then(response => {
-
-                return response.json()
-            }).then(data => {
-                let jsonobject=data
-                console.log(`Latest info: ${jsonobject}`);
-                let result=JSON.parse(jsonobject)
+        this.setState({latestInformation: {isQueryRunning: true}})
+        this.props.user.functions.GetLatestTSCollectionStatistics().then(
+            data => {
+                let result = data
                 result.latestCurrencyDateLocalStr=moment(result.latestCurrencyDate).local().format();
                 result.firstCurrencyDateLocalStr=moment(result.firstCurrencyDate).local().format();
+
                 this.setState({
-                    latestInformation: result,
+                    latestInformation: {
+                        isQueryRunning: false,
+                        latestCurrencyDateLocalStr: moment(result.latestCurrencyDate).local().format(),
+                        firstCurrencyDateLocalStr: moment(result.firstCurrencyDate).local().format(),
+                        totalNumberOfRecords: result.totalNumberOfRecords,
+                        totalNumberOfBuckets: result.totalNumberOfBuckets
+                    }
                 });
-            });
+            }
+
+        )
+        
+      
     }
 
-    UNSAFE_componentWillMount() {
-        //this.fetchLatestInfo()
-    }
 
-    getBuiltURLforFetch () {
-        let url = `${window['getConfig'].REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`
-        url += `?currency=${this.state.currency}&interval=${this.state.interval}&hourFilter=${this.state.hourFilter}`
 
-        if (this.state.enabledFilters.movingAverage[0]) {
-            url += `&ma_1=${this.state.movingAverageFilters[0]}`
-        }
-        if (this.state.enabledFilters.movingAverage[1]) {
-            url += `&ma_2=${this.state.movingAverageFilters[1]}`
-        }
-        if (this.state.enabledFilters.movingAverage[2]) {
-            url += `&ema_1=${this.state.movingAverageFilters[2]}`
-        }
-        if (this.state.enabledFilters.movingAverage[3]) {
-            url += `&ema_2=${this.state.movingAverageFilters[3]}`
-        }
-        if (this.state.enabledFilters.macd) {
-            url += `&macd_1=${this.state.numOfPrevDataPointsMacdLine1}&macd_2=${this.state.numOfPrevDataPointsMacdLine2}&macd_signal=${this.state.numOfPrevDataPointsMacdSignal}`
-        }
-        if (this.state.enabledFilters.rsi) {
-            url += `&rsi=${this.state.numOfPrevDataPointsRSI}`
-        }
-        if (this.state.enabledFilters.stochasticOscillator) {
-            url += `&stoc_ossc=${this.state.numOfPrevDataPointsStochasticOscillator}`
-        }
-        return url
-    }
+    UNSAFE_componentWillMount() { this.fetchLatestInfo() }
+
 
     fetchAndRender (type) { 
         this.setState({queryIsRunning: true})
-        console.log(`API endpoint for retrieving currency data: ${window['getConfig'].REACT_APP_ENDPOINT_PARTICULAR_CURRENCY_DATA}`)
-        fetch(this.getBuiltURLforFetch())            
-        .then(response => {
-            this.setState({queryIsRunning: false})
-            return response.json()
-        }).then(data => {
-            //var jsonobject=JSON.parse(data)
-            console.log("data:" + data)
-            console.log("results str:" + data.result)
-            var result=JSON.parse(data.result)
-            console.log("rsult" + result)
-            var query=data.query
 
-            // what should I render? TABLE or CHART
-            if (type === "TABLE") {
-                let currencyHistory = result.map((currency) => {
-                    return currency
-                });
-                this.setState({query: query, currencyHistoryDataForTable: currencyHistory})                
-                this.renderTable()
-            }
-            else if (type === "CHART") {
-                
-                // keep maximum last 100 elements of result array to mitigate chart freezing in the case of huge data
-                let optimizedArray = result.slice(Math.max(result.length-100,0))
-                optimizedArray = optimizedArray.map(x => {
-                    x.localTimeStr = moment.utc(x._id.time).local().format()
-                    return x
-                })
+        let parameterObject = {
+            symbol: this.state.currency,
+            hourFilter: this.state.hourFilter,
+            candleStickUnit: "minute",
+            candleStickInterval: this.state.interval,
+            ma1: (this.state.enabledFilters.movingAverage[0]) ? parseInt(this.state.movingAverageFilters[0]) : null,
+            ma2: (this.state.enabledFilters.movingAverage[1]) ? parseInt(this.state.movingAverageFilters[1]) : null,
+            ema1: (this.state.enabledFilters.movingAverage[2]) ? parseInt(this.state.movingAverageFilters[2]) : null,
+            ema2: (this.state.enabledFilters.movingAverage[3]) ? parseInt(this.state.movingAverageFilters[3]) : null,
+            macd1: (this.state.enabledFilters.macd) ? parseInt(this.state.numOfPrevDataPointsMacdLine1) : null,
+            macd2: (this.state.enabledFilters.macd) ? parseInt(this.state.numOfPrevDataPointsMacdLine2) : null,
+            macdSignal: (this.state.enabledFilters.macd) ? parseInt(this.state.numOfPrevDataPointsMacdSignal) : null,
+            rsi: (this.state.enabledFilters.rsi)? parseInt(this.state.rsi) : null,
+            stocOsc: (this.state.enabledFilters.stochasticOscillator) ? parseInt(this.state.stocOsc) : null
+        }
 
-              
-                
-                // candlestick chart update
-                let candleStickData = optimizedArray.map((currency) => {
-                    return {"x": currency.localTimeStr, "y": [currency.open,currency.high,currency.low,currency.close]}
-                });
+        this.props.user.functions.GetTickerReport(parameterObject).then(data =>
+            {
+                let result = data.result
+                let query = JSON.stringify(data.query, null, 4)
 
-                // MA 1 - line chart update
-                let movingAverageData_01 = optimizedArray.map((currency) => {
-                    return {"x": currency.localTimeStr, "y" : currency.movingAverage01}
-                });
-                
-                // MA 2 - line chart update
-                let movingAverageData_02 = optimizedArray.map((currency) => {
-                    return {"x": currency.localTimeStr, "y" : currency.movingAverage02}
-                });
-
-                // EMA 1 - line chart update
-                let expMovingAverageData_01 = optimizedArray.map((currency) => {
-                    return {"x": currency.localTimeStr, "y" : currency.expMovingAverage01}
-                });
-
-                // EMA 2 - line chart update
-                let expMovingAverageData_02 = optimizedArray.map((currency) => {
-                    return {"x": currency.localTimeStr, "y" : currency.expMovingAverage02}
-                });
-
-                var macdLineData = null
-                var macdSignalData = null
-                var macdHistogramData = null
-                if (this.state.numOfPrevDataPointsMacdLine1 !== 0) {
-                    //console.log(optimizedArray)
-                    // draw MACD chart
-                    macdLineData = optimizedArray.map((currency) => {
-                        return {"x": currency.localTimeStr, "y" : currency.macdLine}
+                if (type === "TABLE") {
+                    let currencyHistory = result.map((currency) => {
+                        return currency
                     });
-
-                    macdSignalData = optimizedArray.map((currency) => {
-                        return {"x": currency.localTimeStr, "y" : currency.macdSignal}
-                    });
-
-                    macdHistogramData = optimizedArray.map((currency) => {
-                        return {"x": currency.localTimeStr, "y" : currency.macdHistogram}
-                    });
-
+                    this.setState({query: query, currencyHistoryDataForTable: currencyHistory})                
+                    this.setState({queryIsRunning: false})
+                    this.renderTable()
                 }
-
-
-                var rsiData = null
-                if (this.state.numOfPrevDataPointsRSI !== 0) {
-                    rsiData = optimizedArray.map((currency) => {
-                        return {"x": currency.localTimeStr, "y" : currency.rsi}
+                else if (type === "CHART") {
+                
+                    // keep maximum last 100 elements of result array to mitigate chart freezing in the case of huge data
+                    let optimizedArray = result.slice(Math.max(result.length-100,0))
+                    optimizedArray = optimizedArray.map(x => {
+                        x.localTimeStr = moment.utc(x._id.time).local().format()
+                        return x
+                    })
+    
+                  
+                    
+                    // candlestick chart update
+                    let candleStickData = optimizedArray.map((currency) => {
+                        return {"x": currency.localTimeStr, "y": [currency.open,currency.high,currency.low,currency.close]}
                     });
-                }
-
-                var stocOsscDataKValue = null
-                var stocOsscDataDValue = null
-                if (this.state.numOfPrevDataPointsStochasticOscillator !== 0) {
-                    stocOsscDataKValue = optimizedArray.map((currency) => {
-                        return {"x": currency.localTimeStr, "y" : currency.stocOsscKValue}
+    
+                    // MA 1 - line chart update
+                    let movingAverageData_01 = optimizedArray.map((currency) => {
+                        return {"x": currency.localTimeStr, "y" : currency.movingAverage01}
                     });
-
-                    stocOsscDataDValue = optimizedArray.map((currency) => {
-                        return {"x": currency.localTimeStr, "y" : currency.stocOsscDValue}
+                    
+                    // MA 2 - line chart update
+                    let movingAverageData_02 = optimizedArray.map((currency) => {
+                        return {"x": currency.localTimeStr, "y" : currency.movingAverage02}
                     });
-                }
-
-
-                this.setState({
-                    query: query, 
-                    chartData: {
-                        candleStick: candleStickData,
-                        movingAverage01: movingAverageData_01,
-                        movingAverage02: movingAverageData_02,
-                        expMovingAverage01: expMovingAverageData_01,
-                        expMovingAverage02: expMovingAverageData_02,
-                        macdLine: macdLineData,
-                        macdSignal: macdSignalData,
-                        macdHistogram: macdHistogramData,
-                        rsi: rsiData,
-                        stocOsscK: stocOsscDataKValue,
-                        stocOsscD: stocOsscDataDValue
+    
+                    // EMA 1 - line chart update
+                    let expMovingAverageData_01 = optimizedArray.map((currency) => {
+                        return {"x": currency.localTimeStr, "y" : currency.expMovingAverage01}
+                    });
+    
+                    // EMA 2 - line chart update
+                    let expMovingAverageData_02 = optimizedArray.map((currency) => {
+                        return {"x": currency.localTimeStr, "y" : currency.expMovingAverage02}
+                    });
+    
+                    var macdLineData = null
+                    var macdSignalData = null
+                    var macdHistogramData = null
+                    if (this.state.numOfPrevDataPointsMacdLine1 !== 0) {
+                        //console.log(optimizedArray)
+                        // draw MACD chart
+                        macdLineData = optimizedArray.map((currency) => {
+                            return {"x": currency.localTimeStr, "y" : currency.macdLine}
+                        });
+    
+                        macdSignalData = optimizedArray.map((currency) => {
+                            return {"x": currency.localTimeStr, "y" : currency.macdSignal}
+                        });
+    
+                        macdHistogramData = optimizedArray.map((currency) => {
+                            return {"x": currency.localTimeStr, "y" : currency.macdHistogram}
+                        });
+    
                     }
-                })
-                this.renderChart()
-            }
-
-    });
+    
+    
+                    var rsiData = null
+                    if (this.state.numOfPrevDataPointsRSI !== 0) {
+                        rsiData = optimizedArray.map((currency) => {
+                            return {"x": currency.localTimeStr, "y" : currency.rsi}
+                        });
+                    }
+    
+                    var stocOsscDataKValue = null
+                    var stocOsscDataDValue = null
+                    if (this.state.numOfPrevDataPointsStochasticOscillator !== 0) {
+                        stocOsscDataKValue = optimizedArray.map((currency) => {
+                            return {"x": currency.localTimeStr, "y" : currency.stocOsscKValue}
+                        });
+    
+                        stocOsscDataDValue = optimizedArray.map((currency) => {
+                            return {"x": currency.localTimeStr, "y" : currency.stocOsscDValue}
+                        });
+                    }
+    
+    
+                    this.setState({
+                        query: query, 
+                        chartData: {
+                            candleStick: candleStickData,
+                            movingAverage01: movingAverageData_01,
+                            movingAverage02: movingAverageData_02,
+                            expMovingAverage01: expMovingAverageData_01,
+                            expMovingAverage02: expMovingAverageData_02,
+                            macdLine: macdLineData,
+                            macdSignal: macdSignalData,
+                            macdHistogram: macdHistogramData,
+                            rsi: rsiData,
+                            stocOsscK: stocOsscDataKValue,
+                            stocOsscD: stocOsscDataDValue
+                        }
+                    })
+                    this.setState({queryIsRunning: false})
+                    this.renderChart()
+                }
+            }    
+        )
+ 
     }
 
     renderTable() {
@@ -367,31 +352,31 @@ class IndividualCurrencyPage extends React.Component {
                                         <Label>
                                             <Icon name='clock outline' />
                                             Latest Record Date-Time:
-                                            <Label.Detail>{this.state.latestInformation.latestCurrencyDateLocalStr}</Label.Detail>
+                                            <Label.Detail>{  this.state.latestInformation.isQueryRunning ? "Please wait, loading..." : this.state.latestInformation.latestCurrencyDateLocalStr}</Label.Detail>
                                         </Label>
                                         <br/>
                                         <Label>
                                             <Icon name='clock outline' />
                                             First Record Date-Time:
-                                            <Label.Detail>{this.state.latestInformation.firstCurrencyDateLocalStr}</Label.Detail>
+                                            <Label.Detail>{  this.state.latestInformation.isQueryRunning ? "Please wait, loading..." : this.state.latestInformation.firstCurrencyDateLocalStr}</Label.Detail>
                                         </Label>
                                         <br/>
                                         <Label>
                                             <Icon name='hashtag' />
                                             Number of Records:
-                                            <Label.Detail>{this.state.latestInformation.totalNumberOfRecords}</Label.Detail>
+                                            <Label.Detail>~{  this.state.latestInformation.isQueryRunning ? "Please wait, loading..." : this.state.latestInformation.totalNumberOfRecords}</Label.Detail>
                                         </Label>
                                         <Label>
                                             <Icon name='hashtag' />
                                             Number of Buckets:
-                                            <Label.Detail>{this.state.latestInformation.totalNumberOfBuckets}</Label.Detail>
+                                            <Label.Detail>{  this.state.latestInformation.isQueryRunning ? "Please wait, loading..." : this.state.latestInformation.totalNumberOfBuckets}</Label.Detail>
                                         </Label>
                                     </Accordion.Content>
                                 </Accordion>
                                 </Segment>    
                                 <Segment>
                                     <Form>
-                                        <CurrencyFilter symbolHandler={(x) => this.handleSymbol(x)}/>
+                                        <CurrencyFilter user={this.props.user} symbolHandler={(x) => this.handleSymbol(x)}/>
                                         <DateFilter sendController={(x) => this.handleHourFilter(x)}/>
                                         <IntervalFilter sendController={(x) => this.handleInterval(x)}/>
                                         <MAFilter name="Moving average 1" number={0}/>
