@@ -153,34 +153,6 @@ class Rules extends React.Component {
             result => {
                 this.setState({statisticsData: result, isStatisticsLoaded: true, isStatisticQueryRunning: false})
             })
-        
-        /*
-        let endpoint = ruleEndpoint
-        var data = JSON.stringify({
-            "collection": "ruleStatistics",
-            "database": "exchange",
-            "dataSource": "ExchangeData",
-            "sort": {"createdAt" : -1 },
-            "filter" : {"ruleId" :{'$oid' : _id}}
-        });
-
-        const requestOptions = {
-            method: 'POST',
-            headers: dataApiHeaders,
-            body: data
-        };
-
-        this.setState({isStatisticQueryRunning: true, isStatisticsLoaded: false})
-
-        fetch(endpoint, requestOptions)
-        .then(response => {
-            return response.json()
-        }).then(data => {
-            let jsonObject = data
-            let jsonObjectArray = jsonObject.documents
-            
-            this.setState({statisticsData: jsonObjectArray, isStatisticsLoaded: true, isStatisticQueryRunning: false})
-        });*/
     }
 
     handleRuleNameChange (value) {
@@ -347,11 +319,15 @@ class Rules extends React.Component {
                                                 </Modal.Actions>
                                                 </Modal>
                                           </Segment>
-                                          <Segment hidden={!this.state.isStatisticsLoaded} loading={this.state.isStatisticQueryRunning}>
+                                          <Segment hidden={!this.state.isStatisticsLoaded && !this.state.isStatisticQueryRunning}>
+                                            <Dimmer active={this.state.isStatisticQueryRunning}>
+                                                <Loader size="big" indeterminate active={this.state.isStatisticQueryRunning}>Loading statistics ...</Loader>
+                                            </Dimmer>
                                             { this.state.isStatisticsLoaded ? 
                                                 <RuleStatistics statisticsData={this.state.statisticsData}/>
                                                 : null }
                                          </Segment>
+                                         
                                          </> 
                         }
 

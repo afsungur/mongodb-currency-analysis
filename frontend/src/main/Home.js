@@ -10,7 +10,7 @@ class Home extends React.Component {
         <h1>CryptoCurrency Analysis with MongoDB v5.0 Timeseries Database </h1>
         <Link to="/currency">
             <button className="ui button">
-                Individual Currency Analysis
+                Currency Analysis
             </button>
         </Link>
         <Link to="/report">

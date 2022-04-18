@@ -19,7 +19,7 @@ import StochasticOscillatorFilter from './StochasticOscillatorFilterComponent';
 class IndividualCurrencyPage extends React.Component {
     constructor(props) {
         super(props)
-        this.defaultQuery = "// It will be updated after query is executed \ndb.ticker.aggregate([])"
+        this.defaultQuery = "// It will be updated just after the query is executed \ndb.{collectionName}.aggregate([...])"
         this.state = {
             currencyHistoryDataForTable: undefined,
             renderTable: false,
@@ -337,7 +337,7 @@ class IndividualCurrencyPage extends React.Component {
                                 
 
                                 <Segment>
-                                <Accordion fluid styled>
+                                <Accordion>
                                     <Accordion.Title
                                         active={this.state.isStatisticsAccordionOpen}
                                         index={0}
@@ -390,6 +390,7 @@ class IndividualCurrencyPage extends React.Component {
                                         <Button icon labelPosition='right' disabled={this.state.currency===""} color='green' onClick={() => this.fetchAndRender("TABLE")} ><Icon name='numbered list'/>Show Data</Button>
                                     </Form>
                                 </Segment>
+                                {(this.state.renderTable || this.state.renderChart)?
                                 <Segment>
                                     <Dimmer active={this.state.queryIsRunning}>
                                             <Loader size="big" indeterminate active={this.state.queryIsRunning}>Loading ...</Loader>
@@ -397,6 +398,8 @@ class IndividualCurrencyPage extends React.Component {
                                     {this.state.renderTable ?<IntervalData/> :null }
                                     {this.state.renderChart ?<CurrencyChart/> :null}
                                 </Segment>
+                                : null
+                                }
                                 <Segment>
                                     <Dimmer active={this.state.queryIsRunning}>
                                             <Loader size="big" indeterminate active={this.state.queryIsRunning}>Loading ...</Loader>

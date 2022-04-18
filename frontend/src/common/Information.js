@@ -24,7 +24,7 @@ class Information extends React.Component {
     render() {
         const { activeIndex } = this.state
         return (
-            <Accordion fluid styled>
+            <Accordion>
                 <Accordion.Title
                     active={activeIndex === 0}
                     index={0}

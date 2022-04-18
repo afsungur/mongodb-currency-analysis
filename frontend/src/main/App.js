@@ -31,7 +31,7 @@ function Menu ({ user }) {
           Home
         </a>
         <a className="item" href="/currency">
-          Individual Currency Analysis
+          Currency Analysis
         </a>
         
         <a className="item" href="/rules">
@@ -39,11 +39,11 @@ function Menu ({ user }) {
         </a>
         <div className="right menu">
           <a className="item" href="https://cloud.mongodb.com" target="_blank" rel="noreferrer">
-            <img alt="" src="https://webimages.mongodb.com/_com_assets/cms/MongoDB_Logo_FullColorBlack_RGB-4td3yuxzjs.png?auto=format%2Ccompress" style={styles}/>          
+            <img alt="" src="/mdblogo.svg" style={styles}/>          
             
           </a>
           <a className="item" href="https://docs.mongodb.com/manual/core/timeseries-collections/" target="_blank" rel="noreferrer">
-            <img alt="" src="https://webimages.mongodb.com/_com_assets/cms/kqttj75kal7lsn48z-time_series_4@2x.png?auto=format%2Ccompress&ch=DPR" style={logoStyles}></img>
+            <img alt="" src="/ts.avif" style={logoStyles}></img>
           </a>
         </div>
       </div>
