@@ -137,7 +137,7 @@ class Rules extends React.Component {
                     let rules = this.state.rules.slice()
                     rules = rules.filter( x =>  x._id !== _id)
                     
-                    this.setState({rules: rules})
+                    this.setState({rules: rules, isStatisticsLoaded: false})
                     this.removeRuleStatistics(_id) // no need to track
                 }
             }

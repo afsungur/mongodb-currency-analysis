@@ -113,8 +113,8 @@ class IndividualCurrencyPage extends React.Component {
             macd1: (this.state.enabledFilters.macd) ? parseInt(this.state.numOfPrevDataPointsMacdLine1) : null,
             macd2: (this.state.enabledFilters.macd) ? parseInt(this.state.numOfPrevDataPointsMacdLine2) : null,
             macdSignal: (this.state.enabledFilters.macd) ? parseInt(this.state.numOfPrevDataPointsMacdSignal) : null,
-            rsi: (this.state.enabledFilters.rsi)? parseInt(this.state.rsi) : null,
-            stocOsc: (this.state.enabledFilters.stochasticOscillator) ? parseInt(this.state.stocOsc) : null
+            rsi: (this.state.enabledFilters.rsi)? parseInt(this.state.numOfPrevDataPointsRSI) : null,
+            stocOsc: (this.state.enabledFilters.stochasticOscillator) ? parseInt(this.state.numOfPrevDataPointsStochasticOscillator) : null
         }
 
         this.props.user.functions.GetTickerReport(parameterObject).then(data =>

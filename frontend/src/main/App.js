@@ -19,7 +19,7 @@ function Login({ setUser }) {
   };
   loginAnonymous()
   //return <button onClick={loginAnonymous}>Log In</button>;
-  
+  // auto logging
   return (<div>Logging in...</div>)
 }
 
@@ -53,7 +53,7 @@ function Menu ({ user }) {
       <Route exact path='/report' component={Report}></Route>
       <Route exact path='/rules' render={(props) => <Rules user={user} {...props} /> } ></Route>
       </Switch>
-      <div>User id: {user.id}</div>
+      <div style={{display:'none'}}>User id: {user.id}</div>
     </div>
   )
 }
