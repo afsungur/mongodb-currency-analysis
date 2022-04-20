@@ -2,12 +2,12 @@ import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import * as Realm from "realm-web";
 import { Switch, Route, Redirect } from 'react-router-dom';
-import Home from './Home';
-import IndividualCurrencyPage from '../individual-currency/IndividualCurrencyPageComponent'
+// import Home from './Home';
+import TickerAnalysisComponent from '../individual-currency/TickerAnalysisComponent'
 import Report from '../report/Report'
 import Rules from '../rules/Rules'
 
-const app = new Realm.App({ id: "testtickeranalysis-lgpvr" });
+const app = new Realm.App({ id: `${window['getConfig'].REALM_APP_ID}` });
 
 const styles = {width: "200px"};
 const logoStyles = {width: "100px"}
@@ -49,7 +49,7 @@ function Menu ({ user }) {
       </div>
       <Switch> {/* The Switch decides which component to show based on the current URL.*/}
       <Route exact path='/'><Redirect to="/currency" /></Route>
-      <Route exact path='/currency' render={(props) => <IndividualCurrencyPage user={user} {...props} /> } ></Route>
+      <Route exact path='/currency' render={(props) => <TickerAnalysisComponent user={user} {...props} /> } ></Route>
       <Route exact path='/report' component={Report}></Route>
       <Route exact path='/rules' render={(props) => <Rules user={user} {...props} /> } ></Route>
       </Switch>

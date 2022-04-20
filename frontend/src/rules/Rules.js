@@ -1,7 +1,7 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Message, Divider, Button, Segment, Form, Container, Tab, Dropdown, Dimmer, Modal, Loader, Input, Table } from 'semantic-ui-react';
-import CurrencyFilter from '../individual-currency/CurrencyFilterComponent';
+import TickerFilter from '../individual-currency/TickerFilterComponent';
 import IntervalFilter from '../common/IntervalFilter';
 import moment from 'moment'
 import NumberInput from 'semantic-ui-react-numberinput';
@@ -72,7 +72,7 @@ class Rules extends React.Component {
     
     handleSymbol(value) {
         this.setState({currency: value})
-        console.log("This value selected:" + value)
+        console.log("SELECTED CURRENCY:" + value)
 
     }
 
@@ -176,7 +176,7 @@ class Rules extends React.Component {
                                                         <label>Rule Name</label>
                                                         <Input placeholder="Give a name to rule to identify rule later" value={this.state.ruleName} onChange={(event,data) => this.handleRuleNameChange(data.value)}/>
                                                 </Form.Field>
-                                                <CurrencyFilter user={this.props.user} symbolHandler={(x) => this.handleSymbol(x)}/>
+                                                <TickerFilter user={this.props.user} symbolHandler={(x) => this.handleSymbol(x)}/>
                                                 <IntervalFilter sendController={(x) => this.handleInterval(x)}/>
 
                                                 <Form.Group widths={12}>

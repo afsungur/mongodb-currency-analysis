@@ -1,10 +1,10 @@
 import React, {Fragment} from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Table } from 'semantic-ui-react';
-import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import TickerAnalysisContext from './TickerAnalysisContext';
 import moment from 'moment'
 
-class IntervalData extends React.Component {
+class TickerTableData extends React.Component {
 
     render () {
 
@@ -110,5 +110,5 @@ class IntervalData extends React.Component {
     }
 }
 
-IntervalData.contextType = IndividiualCurrencyContext
-export default IntervalData 
+TickerTableData.contextType = TickerAnalysisContext
+export default TickerTableData 

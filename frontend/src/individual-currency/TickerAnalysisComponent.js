@@ -1,22 +1,22 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Button, Segment, Form, Dimmer, Loader, Label, Icon, Accordion } from 'semantic-ui-react';
-import CurrencyFilter from './CurrencyFilterComponent'
+import TickerFilter from './TickerFilterComponent'
 import IntervalFilter from '../common/IntervalFilter'
 import DateFilter from '../common/DateFilter'
-import IntervalData from './CurrencyTableDataComponent'
-import CurrencyChart from './CurrencyChart'
+import TickerTableData from './TickerTableDataComponent'
+import TickerChart from './TickerChart'
 import Information from '../common/Information'
 import MAFilter from './MAFilterComponent'
 import MACDFilter  from './MACDFilterComponent';
 import RSIFilter from './RSIFilterComponent';
-import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import TickerAnalysisContext from './TickerAnalysisContext';
 import moment from 'moment'
 import StochasticOscillatorFilter from './StochasticOscillatorFilterComponent';
 
 
 
-class IndividualCurrencyPage extends React.Component {
+class TickerAnalysisComponent extends React.Component {
     constructor(props) {
         super(props)
         this.defaultQuery = "// It will be updated just after the query is executed \ndb.{collectionName}.aggregate([...])"
@@ -93,10 +93,7 @@ class IndividualCurrencyPage extends React.Component {
       
     }
 
-
-
     UNSAFE_componentWillMount() { this.fetchLatestInfo() }
-
 
     fetchAndRender (type) { 
         this.setState({queryIsRunning: true})
@@ -170,7 +167,6 @@ class IndividualCurrencyPage extends React.Component {
                     var macdSignalData = null
                     var macdHistogramData = null
                     if (this.state.numOfPrevDataPointsMacdLine1 !== 0) {
-                        //console.log(optimizedArray)
                         // draw MACD chart
                         macdLineData = optimizedArray.map((currency) => {
                             return {"x": currency.localTimeStr, "y" : currency.macdLine}
@@ -253,7 +249,6 @@ class IndividualCurrencyPage extends React.Component {
     
     handleSymbol(value) {
         this.setState({currency: value})
-        console.log("This value selected:" + value)
 
     }
 
@@ -263,7 +258,7 @@ class IndividualCurrencyPage extends React.Component {
         
         return (
 
-            <IndividiualCurrencyContext.Provider value={{
+            <TickerAnalysisContext.Provider value={{
 
                 movingAverageFilters: this.state.movingAverageFilters,
                 setMovingAverageFilter: (index, value) => {
@@ -376,7 +371,7 @@ class IndividualCurrencyPage extends React.Component {
                                 </Segment>    
                                 <Segment>
                                     <Form>
-                                        <CurrencyFilter user={this.props.user} symbolHandler={(x) => this.handleSymbol(x)}/>
+                                        <TickerFilter user={this.props.user} symbolHandler={(x) => this.handleSymbol(x)}/>
                                         <DateFilter sendController={(x) => this.handleHourFilter(x)}/>
                                         <IntervalFilter sendController={(x) => this.handleInterval(x)}/>
                                         <MAFilter name="Moving average 1" number={0}/>
@@ -395,8 +390,8 @@ class IndividualCurrencyPage extends React.Component {
                                     <Dimmer active={this.state.queryIsRunning}>
                                             <Loader size="big" indeterminate active={this.state.queryIsRunning}>Loading ...</Loader>
                                     </Dimmer>
-                                    {this.state.renderTable ?<IntervalData/> :null }
-                                    {this.state.renderChart ?<CurrencyChart/> :null}
+                                    {this.state.renderTable ?<TickerTableData/> :null }
+                                    {this.state.renderChart ?<TickerChart/> :null}
                                 </Segment>
                                 : null
                                 }
@@ -411,10 +406,10 @@ class IndividualCurrencyPage extends React.Component {
                             </div>
                         </div>
                     </div>
-                </IndividiualCurrencyContext.Provider>
+                </TickerAnalysisContext.Provider>
 
         )
     }
 }
 
-export default IndividualCurrencyPage
+export default TickerAnalysisComponent

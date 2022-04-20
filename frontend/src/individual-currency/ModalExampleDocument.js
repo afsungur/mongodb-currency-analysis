@@ -80,7 +80,7 @@ class ModalExampleDocument extends React.Component {
              download={this.state.fileName}
              href={this.state.fileDownloadUrl}
              ref={e=>this.dofileDownload = e}
-          ></a>
+          > </a>
           <Button onClick={() => this.props.handleClose()} primary>
             Close <Icon name='window close' />
           </Button>

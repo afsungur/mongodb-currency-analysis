@@ -1,7 +1,7 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Form, Checkbox, Input } from 'semantic-ui-react';
-import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import TickerAnalysisContext from './TickerAnalysisContext';
 
 class MACDFilter extends React.Component {
 
@@ -42,5 +42,5 @@ class MACDFilter extends React.Component {
     }
 }
 
-MACDFilter.contextType = IndividiualCurrencyContext
+MACDFilter.contextType = TickerAnalysisContext
 export default MACDFilter

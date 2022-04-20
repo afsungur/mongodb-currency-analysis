@@ -1,11 +1,11 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
-import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import TickerAnalysisContext from './TickerAnalysisContext';
 import MACDChart from './MACDChart'
 import RSIChart from './RSIChart'
 import CandleStickChart from './CandleStickChart';
 import StochasticOscillatorChart from './StochasticOscillatorChart'
-class CurrencyChart extends React.Component {
+class TickerChart extends React.Component {
     
   constructor(props) {
       super(props);
@@ -56,5 +56,5 @@ class CurrencyChart extends React.Component {
 }
   
   
-CurrencyChart.contextType = IndividiualCurrencyContext
-export default CurrencyChart;
+TickerChart.contextType = TickerAnalysisContext
+export default TickerChart;

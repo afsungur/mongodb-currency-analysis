@@ -1,7 +1,7 @@
 import React from 'react';
 import 'fomantic-ui-css/semantic.css';
 import { Form, Checkbox, Input } from 'semantic-ui-react';
-import IndividiualCurrencyContext from './IndividualCurrencyContext';
+import TickerAnalysisContext from './TickerAnalysisContext';
 
 class StochasticOscillatorFilter extends React.Component {
  
@@ -29,5 +29,5 @@ class StochasticOscillatorFilter extends React.Component {
         )
     }
 }
-StochasticOscillatorFilter.contextType = IndividiualCurrencyContext
+StochasticOscillatorFilter.contextType = TickerAnalysisContext
 export default StochasticOscillatorFilter

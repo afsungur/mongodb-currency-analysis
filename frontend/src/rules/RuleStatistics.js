@@ -15,10 +15,7 @@ class RuleStatistics extends React.Component {
     }
     render () {
 
-        var arrayData = [{"_id":"61682f393e0e6f2e048f622d","ruleId":"61682d534697b7687cf0b656","symbol":"BNBBUSD","time":"2021-10-14T13:23:05.473Z","methodValue":479.14809160305344,"lastPrice":478.9,"percentageDifferent":-0.05177764607669497,"conditionsMet":false}]
-        console.log("sss" + this.props.statisticsData)
-        arrayData = this.props.statisticsData;
-        console.log("Type:" + typeof(arrayData))
+        var arrayData = this.props.statisticsData;
         return (
             <Table celled striped>
             <Table.Header>

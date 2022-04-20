@@ -3,7 +3,7 @@ import 'fomantic-ui-css/semantic.css';
 import { Form, Header, Popup, Button, Grid, Icon} from 'semantic-ui-react';
 import ModalExampleDocument from './ModalExampleDocument';
 
-class CurrencyFilter extends React.Component {
+class TickerFilter extends React.Component {
     
     constructor(props) {
         super(props)
@@ -24,7 +24,7 @@ class CurrencyFilter extends React.Component {
 
     componentDidMount() {
         let currencies = [];
-        console.log("function called for currencies")
+        console.log("Function called for currencies")
         this.props.user.functions.GetSymbols(null).then(
             result => {
                     result.map((currency) => (currencies.push({"text": currency._id, "value" : currency._id})))
@@ -106,4 +106,4 @@ class CurrencyFilter extends React.Component {
     }
 }
 
-export default CurrencyFilter
+export default TickerFilter
